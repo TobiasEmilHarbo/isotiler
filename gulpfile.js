@@ -16,6 +16,7 @@ browserSync.init({
 });
 const paths = {
   pages: ['src/*.html'],
+  resources: ['src/app/**/*.png']
 };
 const watchedBrowserify = watchify(
   browserify({
@@ -27,6 +28,7 @@ const watchedBrowserify = watchify(
   }).plugin(tsify),
 );
 gulp.task('copy-html', () => gulp.src(paths.pages).pipe(gulp.dest('dist')));
+gulp.task('copy-resources', () => gulp.src(paths.resources).pipe(gulp.dest('dist')));
 function bundle() {
   return watchedBrowserify
     .plugin(tsify)
@@ -44,6 +46,7 @@ function bundle() {
       stream: true,
     }));
 }
-gulp.task('default', gulp.series(gulp.parallel('copy-html'), bundle));
+gulp.task('default', gulp.series(gulp.parallel('copy-html'), gulp.parallel('copy-resources'), bundle));
 watchedBrowserify.on('update', bundle);
+watchedBrowserify.on('error', bundle);
 watchedBrowserify.on('log', fancyLog);
