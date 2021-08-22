@@ -28,7 +28,9 @@ export default class Vector {
   }
 
   public magnitude(): number {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
+    return Math.sqrt(
+      Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2)
+    );
   }
 
   public rotate(degrees: number): Vector {
@@ -51,21 +53,25 @@ export default class Vector {
   }
 
   public angleBetween180(other: Vector): number {
-    return Math.acos(
-      (this.x * other.x - this.y * other.y) /
-        (this.magnitude() * other.magnitude())
+    return (
+      Math.acos(this.dot(other) / (this.magnitude() * other.magnitude())) *
+      (180 / Math.PI)
     );
   }
 
-  public angleBetween360(other: Vector): number {
-    // var skalar = this.dot(other);
-    var angle = this.angleBetween180(other) * (180 / Math.PI);
-    var zCross = this.cross(other).z;
+  public angleBetween(other: Vector): number {
+    const angle = this.angleBetween180(other);
 
-    if (zCross < 0) {
+    const zCross = this.cross(other).z;
+
+    if (zCross > 0) {
       return 360 - angle;
     }
 
     return angle;
+  }
+
+  public toString(): string {
+    return `[${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)}]`;
   }
 }

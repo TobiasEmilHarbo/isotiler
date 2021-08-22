@@ -1,4 +1,4 @@
-import { Drawable } from "./library/Drawable";
+import Vector from "./Vector";
 import Sprite from "./Sprite";
 
 export default class SpriteSheet {
@@ -15,8 +15,7 @@ export default class SpriteSheet {
     y: number,
     width?: number,
     height?: number,
-    originX?: number,
-    originY?: number
+    origin?: Vector
   ): void {
     const buffer = document.createElement("canvas");
     buffer.width = width ? width : this.spriteWidth;
@@ -36,7 +35,7 @@ export default class SpriteSheet {
         buffer.height
       );
 
-    const sprite = new Sprite(buffer);
+    const sprite = new Sprite(buffer, origin);
     this.sprites.set(name, sprite);
   }
 

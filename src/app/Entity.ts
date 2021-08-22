@@ -1,11 +1,13 @@
-import Vector from "../Vector";
+import Vector from "./Vector";
 import { Drawable } from "./library/Drawable";
 import Sprite from "./Sprite";
 import SpriteSheet from "./SpriteSheet";
 
 export default abstract class Entity implements Drawable {
   private _position = new Vector();
-  private _velocity = new Vector();
+  private _velocity = new Vector(0, -4);
+  private _heading = new Vector(0, -1);
+
   private _currentSprite: Sprite;
 
   constructor(protected spriteSheet: SpriteSheet) {}
@@ -32,6 +34,14 @@ export default abstract class Entity implements Drawable {
 
   protected set currentSprite(sprite: Sprite) {
     this._currentSprite = sprite;
+  }
+
+  protected get heading(): Vector {
+    return this._heading;
+  }
+
+  protected set heading(vector: Vector) {
+    this._heading = vector;
   }
 
   public draw(context: CanvasRenderingContext2D): void {
