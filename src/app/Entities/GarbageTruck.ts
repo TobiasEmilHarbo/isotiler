@@ -1,4 +1,4 @@
-import Vector from "../Vector";
+import Vector, { vectors } from "../Vector";
 import Entity from "../Entity";
 import { Direction } from "../library/Direction";
 import SpriteSheet from "../SpriteSheet";
@@ -16,19 +16,16 @@ export default class GarbageTruck extends Entity {
     spriteSheet.define("E", 3, 47, 33, 28, new Vector(17, 17));
     spriteSheet.define("NE", 122, 6, 35, 30, new Vector(18, 18));
 
-    this.velocity = new Vector(2, 1);
+    this.velocity = vectors.NORTH;
   }
 
   public update(): void {
     this.velocity = this.velocity.rotate(3);
-    this.heading = this.velocity;
-
-    // console.log("velocity: ", this.velocity.toString());
-    // console.log("heading: ", this.heading.toString());
+    this.heading = this.heading.rotate(3);
 
     this.currentSprite = this.spriteSheet.get(this.getHeading());
 
-    this.getPosition().add(this.velocity);
+    this.position.add(this.velocity);
   }
 
   public setVelocity(velocity: Vector): void {
@@ -36,7 +33,7 @@ export default class GarbageTruck extends Entity {
   }
 
   private getHeading(): Direction {
-    const north = new Vector(0, -1);
+    const north = vectors.NORTH;
     const angle = this.heading.angleBetween(north);
 
     const OFFSET = 22.5;
@@ -64,5 +61,22 @@ export default class GarbageTruck extends Entity {
     }
 
     return Direction.NORTH;
+  }
+
+  public draw(context: CanvasRenderingContext2D) {
+    super.draw(context);
+
+    context.strokeStyle = "red";
+    context.beginPath();
+    context.arc(this.position.x, this.position.y, 12, 0, 2 * Math.PI);
+
+    const heading = this.heading.fixedLength(18);
+    heading.add(this.position);
+
+    context.moveTo(this.position.x, this.position.y);
+    context.lineTo(heading.x, heading.y);
+    context.closePath();
+
+    context.stroke();
   }
 }

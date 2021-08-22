@@ -1,4 +1,4 @@
-import Vector from "./Vector";
+import Vector, { vectors } from "./Vector";
 import { Drawable } from "./library/Drawable";
 import Sprite from "./Sprite";
 import SpriteSheet from "./SpriteSheet";
@@ -6,17 +6,17 @@ import SpriteSheet from "./SpriteSheet";
 export default abstract class Entity implements Drawable {
   private _position = new Vector();
   private _velocity = new Vector();
-  private _heading = new Vector();
+  private _heading = vectors.NORTH;
 
   private _currentSprite: Sprite;
 
   constructor(protected spriteSheet: SpriteSheet) {}
 
-  public setPosition(position: Vector) {
+  public set position(position: Vector) {
     this._position = position;
   }
 
-  public getPosition(): Vector {
+  public get position(): Vector {
     return this._position;
   }
 

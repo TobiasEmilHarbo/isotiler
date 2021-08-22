@@ -21,7 +21,7 @@ forkJoin({
   const garbageTruckSpriteSheet = new SpriteSheet(garbageTruckSprites);
 
   const garbageTruck = new GarbageTruck(garbageTruckSpriteSheet);
-  garbageTruck.setPosition(new Vector(550, 250));
+  garbageTruck.position = new Vector(550, 250);
 
   const tileRenderer = new TileRenderer(9, 9, groundSpriteSheet, tileMap);
 

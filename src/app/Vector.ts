@@ -23,6 +23,14 @@ export default class Vector {
     this._z += vector.z;
   }
 
+  public fixedLength(length: number): Vector {
+    return this.multiply(length / this.magnitude());
+  }
+
+  public multiply(scalar: number): Vector {
+    return new Vector(this.x * scalar, this.y * scalar, this.z * scalar);
+  }
+
   public dot(other: Vector) {
     return this.x * other.x + this.y * other.y + this.z * other.z;
   }
@@ -71,7 +79,15 @@ export default class Vector {
     return angle;
   }
 
+  public clone(): Vector {
+    return new Vector(this.x, this.y, this.z);
+  }
+
   public toString(): string {
-    return `[${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)}]`;
+    return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)})`;
   }
 }
+
+export const vectors = {
+  NORTH: new Vector(0, -1),
+};

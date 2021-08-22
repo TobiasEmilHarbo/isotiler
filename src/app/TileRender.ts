@@ -1,6 +1,7 @@
 import { Drawable } from "./library/Drawable";
 import SpriteSheet from "./SpriteSheet";
 import symbolSpriteMap from "./Mappers";
+import Tile from "./Tile";
 
 const TILE_WIDTH: number = 128;
 const TILE_HEIGHT: number = 64;
@@ -28,19 +29,9 @@ export default class TileRenderer implements Drawable {
           this.buffer.width / 2 + (x - y) * (TILE_WIDTH / 2) - TILE_WIDTH / 2;
         const sY = (x + y) * (TILE_HEIGHT / 2);
 
-        this.buffer
-          .getContext("2d")
-          .drawImage(
-            sprite.buffer,
-            0,
-            0,
-            sprite.width,
-            sprite.height,
-            sX,
-            sY,
-            sprite.width,
-            sprite.height
-          );
+        const tile = new Tile(sX, sY, sprite);
+
+        tile.draw(this.buffer.getContext("2d"));
       }
     }
   }
