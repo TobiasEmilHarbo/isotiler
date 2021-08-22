@@ -6,6 +6,7 @@ import { loadImage } from "./library/loaders";
 import tileMap from "./resources/tileMap";
 import SpriteSheet from "./SpriteSheet";
 import TileRenderer from "./TileRender";
+import Timer from "./Timer";
 
 const canvas = new Canvas(600, 1152);
 canvas.appendTo(document.body);
@@ -25,15 +26,14 @@ forkJoin({
 
   const tileRenderer = new TileRenderer(9, 9, groundSpriteSheet, tileMap);
 
-  function update(time: number) {
+  const timer = new Timer();
+
+  timer.onUpdate((deltaTime) => {
     canvas.clear();
-    garbageTruck.update();
+    garbageTruck.update(deltaTime);
     tileRenderer.draw(canvas.context);
     garbageTruck.draw(canvas.context);
-    requestAnimationFrame(update);
-  }
+  });
 
-  document.body.addEventListener("keypress", () => update(0));
-
-  update(0);
+  timer.start();
 });

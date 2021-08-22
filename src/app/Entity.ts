@@ -48,5 +48,5 @@ export default abstract class Entity implements Drawable {
     this.currentSprite.draw(context, this._position.x, this._position.y);
   }
 
-  public abstract update(): void;
+  public abstract update(deltaTime: number): void;
 }

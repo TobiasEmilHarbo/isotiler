@@ -16,16 +16,16 @@ export default class GarbageTruck extends Entity {
     spriteSheet.define("E", 3, 47, 33, 28, new Vector(17, 17));
     spriteSheet.define("NE", 122, 6, 35, 30, new Vector(18, 18));
 
-    this.velocity = vectors.NORTH;
+    this.velocity = new Vector(0, -200);
   }
 
-  public update(): void {
+  public update(deltaTime: number): void {
     this.velocity = this.velocity.rotate(3);
     this.heading = this.heading.rotate(3);
 
     this.currentSprite = this.spriteSheet.get(this.getHeading());
 
-    this.position.add(this.velocity);
+    this.position.add(this.velocity.multiply(deltaTime));
   }
 
   public setVelocity(velocity: Vector): void {
