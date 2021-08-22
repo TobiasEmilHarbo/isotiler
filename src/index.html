@@ -5,6 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iso game</title>
+    <style>
+      html {
+        background-color: rgb(241, 241, 241);
+      }
+      canvas {
+        background-color: #fff;
+        display: block;
+
+        image-rendering: optimizeSpeed; /*              Older versions of FF          */
+        image-rendering: -moz-crisp-edges; /*           FF 6.0+                       */
+        image-rendering: -webkit-optimize-contrast; /*  Safari                        */
+        image-rendering: -o-crisp-edges; /*             OS X & Windows Opera (12.02+) */
+        image-rendering: pixelated; /*                  Awesome future-browsers       */
+        -ms-interpolation-mode: nearest-neighbor; /*    IE                            */
+
+        margin: 0 auto;
+      }
+    </style>
   </head>
   <body>
     <script src="bundle.js"></script>
