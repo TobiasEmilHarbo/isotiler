@@ -45,9 +45,9 @@ export default class Vector {
   }
 
   public cross(other: Vector): Vector {
-    var x = this.y * other.z - this.z * other.y;
-    var y = this.z * other.x - this.x * other.z;
-    var z = this.x * other.y - this.y * other.x;
+    const x = this.y * other.z - this.z * other.y;
+    const y = this.z * other.x - this.x * other.z;
+    const z = this.x * other.y - this.y * other.x;
 
     return new Vector(x, y, z);
   }

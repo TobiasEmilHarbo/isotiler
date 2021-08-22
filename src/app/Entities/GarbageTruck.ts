@@ -6,6 +6,17 @@ import SpriteSheet from "../SpriteSheet";
 export default class GarbageTruck extends Entity {
   constructor(spriteSheet: SpriteSheet) {
     super(spriteSheet);
+
+    spriteSheet.define("N", 90, 8, 19, 27, new Vector(10, 16));
+    spriteSheet.define("NW", 42, 5, 35, 30, new Vector(17, 19));
+    spriteSheet.define("W", 4, 6, 32, 29, new Vector(15, 18));
+    spriteSheet.define("SW", 123, 45, 34, 32, new Vector(17, 18));
+    spriteSheet.define("S", 90, 46, 19, 30, new Vector(10, 17));
+    spriteSheet.define("SE", 42, 43, 35, 33, new Vector(18, 20));
+    spriteSheet.define("E", 3, 47, 33, 28, new Vector(17, 17));
+    spriteSheet.define("NE", 122, 6, 35, 30, new Vector(18, 18));
+
+    this.velocity = new Vector(2, 1);
   }
 
   public update(): void {

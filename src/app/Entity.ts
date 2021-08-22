@@ -5,8 +5,8 @@ import SpriteSheet from "./SpriteSheet";
 
 export default abstract class Entity implements Drawable {
   private _position = new Vector();
-  private _velocity = new Vector(0, -4);
-  private _heading = new Vector(0, -1);
+  private _velocity = new Vector();
+  private _heading = new Vector();
 
   private _currentSprite: Sprite;
 
