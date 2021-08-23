@@ -1,12 +1,12 @@
-import Vector, { vectors } from "./Vector";
-import { Drawable } from "./library/Drawable";
-import Sprite from "./Sprite";
-import SpriteSheet from "./SpriteSheet";
+import Vector from "../Vector";
+import { Drawable } from "../library/Drawable";
+import Sprite from "../Sprite";
+import SpriteSheet from "../SpriteSheet";
 
 export default abstract class Entity implements Drawable {
   private _position = new Vector();
   private _velocity = new Vector();
-  private _heading = vectors.NORTH;
+  private _heading = Vector.NORTH;
 
   private _currentSprite: Sprite;
 

@@ -1,4 +1,7 @@
 export default class Vector {
+  public static readonly NORTH = new Vector(0, -1);
+  public static readonly WEST = new Vector(-1, 0);
+
   constructor(
     private _x: number = 0,
     private _y: number = 0,
@@ -87,7 +90,3 @@ export default class Vector {
     return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)})`;
   }
 }
-
-export const vectors = {
-  NORTH: new Vector(0, -1),
-};
