@@ -2,6 +2,8 @@ import Vector from "./Vector";
 import { Drawable } from "./library/Drawable";
 
 export default class Sprite implements Drawable {
+  public static readonly EMPTY = new Sprite(document.createElement("canvas"));
+
   constructor(
     private _buffer: HTMLCanvasElement,
     private origin: Vector = new Vector()

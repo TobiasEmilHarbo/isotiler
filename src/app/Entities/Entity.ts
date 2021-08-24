@@ -8,7 +8,7 @@ export default abstract class Entity implements Drawable {
   private _velocity = new Vector();
   private _heading = Vector.NORTH;
 
-  private _currentSprite: Sprite;
+  private _currentSprite: Sprite = Sprite.EMPTY;
 
   constructor(protected spriteSheet: SpriteSheet) {}
 
