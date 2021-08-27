@@ -4,6 +4,6 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "target": "es2015",
-    "lib": ["ES2016","DOM"]
+    "lib": ["ES2017","DOM"]
   }
 }

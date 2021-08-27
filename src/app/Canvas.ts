@@ -2,7 +2,7 @@ export default class Canvas {
   private canvas: HTMLCanvasElement;
   private _context: CanvasRenderingContext2D;
 
-  constructor(height: number, width: number) {
+  constructor(width: number, height: number) {
     const ratio = window.devicePixelRatio;
     this.canvas = document.createElement("canvas");
     this.canvas.width = width * ratio;

@@ -1,4 +1,5 @@
 import SpriteSheet from "../SpriteSheet";
+import KeyboardControl from "../KeyboardControl";
 import Vector from "../Vector";
 import Entity from "./Entity";
 
@@ -10,7 +11,7 @@ export class Tree extends Entity {
 
     spriteSheet.define("tree", 2, 1, 96, 106, new Vector(50, 93));
 
-    this.currentSprite = this.spriteSheet.get("tree");
+    this.sprite = this.spriteSheet.get("tree");
   }
 
   public draw(context: CanvasRenderingContext2D) {

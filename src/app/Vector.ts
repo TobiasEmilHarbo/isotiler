@@ -26,7 +26,7 @@ export default class Vector {
     this._z += vector.z;
   }
 
-  public fixedLength(length: number): Vector {
+  public setLength(length: number): Vector {
     return this.multiply(length / this.magnitude());
   }
 
@@ -34,7 +34,7 @@ export default class Vector {
     return new Vector(this.x * scalar, this.y * scalar, this.z * scalar);
   }
 
-  public dot(other: Vector) {
+  public dot(other: Vector): number {
     return this.x * other.x + this.y * other.y + this.z * other.z;
   }
 
@@ -63,15 +63,25 @@ export default class Vector {
     return new Vector(x, y, z);
   }
 
-  public angleBetween180(other: Vector): number {
-    return (
-      Math.acos(this.dot(other) / (this.magnitude() * other.magnitude())) *
-      (180 / Math.PI)
-    );
+  private angleBetween180(other: Vector): number {
+    const magnitude1 = this.magnitude();
+    const magnitude2 = other.magnitude();
+
+    if (magnitude1 == 0 || magnitude2 == 0) return 0;
+
+    const result =
+      Math.acos(
+        parseFloat((this.dot(other) / (magnitude1 * magnitude2)).toFixed(10))
+      ) *
+      (180 / Math.PI);
+
+    return result;
   }
 
   public angleBetween(other: Vector): number {
     const angle = this.angleBetween180(other);
+
+    if (angle == 0) return angle;
 
     const zCross = this.cross(other).z;
 
@@ -80,6 +90,10 @@ export default class Vector {
     }
 
     return angle;
+  }
+
+  public negate(): Vector {
+    return this.multiply(-1);
   }
 
   public clone(): Vector {

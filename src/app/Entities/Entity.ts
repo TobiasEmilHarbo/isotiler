@@ -2,13 +2,15 @@ import Vector from "../Vector";
 import { Drawable } from "../library/Drawable";
 import Sprite from "../Sprite";
 import SpriteSheet from "../SpriteSheet";
+import Trait from "../Traits/Trait";
 
 export default abstract class Entity implements Drawable {
   private _position = new Vector();
   private _velocity = new Vector();
   private _heading = Vector.NORTH;
+  private _sprite: Sprite = Sprite.EMPTY;
 
-  private _currentSprite: Sprite = Sprite.EMPTY;
+  private traits = new Array<Trait>();
 
   constructor(protected spriteSheet: SpriteSheet) {}
 
@@ -20,33 +22,48 @@ export default abstract class Entity implements Drawable {
     return this._position;
   }
 
-  protected get velocity(): Vector {
+  public get velocity(): Vector {
     return this._velocity;
   }
 
-  protected set velocity(vector: Vector) {
+  public set velocity(vector: Vector) {
     this._velocity = vector;
   }
 
-  protected get currentSprite(): Sprite {
-    return this._currentSprite;
-  }
-
-  protected set currentSprite(sprite: Sprite) {
-    this._currentSprite = sprite;
-  }
-
-  protected get heading(): Vector {
+  public get heading(): Vector {
     return this._heading;
   }
 
-  protected set heading(vector: Vector) {
+  public set heading(vector: Vector) {
     this._heading = vector;
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
-    this.currentSprite.draw(context, this._position.x, this._position.y);
+  public get sprite(): Sprite {
+    return this._sprite;
   }
 
-  public abstract update(deltaTime: number): void;
+  public set sprite(sprite: Sprite) {
+    this._sprite = sprite;
+  }
+
+  public setSprite(spriteName: string) {
+    const newSprite = this.spriteSheet.get(spriteName);
+    if (!newSprite) return;
+    this.sprite = newSprite;
+  }
+
+  public addTrait(trait: Trait): void {
+    this.traits.push(trait);
+  }
+
+  public draw(context: CanvasRenderingContext2D): void {
+    this.sprite.draw(context, this._position.x, this._position.y);
+  }
+
+  public update(deltaTime: number): void {
+    for (let index = this.traits.length - 1; index >= 0; index--) {
+      const trait = this.traits[index];
+      trait.update(this, deltaTime);
+    }
+  }
 }

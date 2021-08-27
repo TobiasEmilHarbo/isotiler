@@ -1,7 +1,16 @@
 import Vector from "../Vector";
+import KeyboardControl, { KEYS, KEY_STATES } from "../KeyboardControl";
 import Entity from "./Entity";
 import { Direction } from "../library/Direction";
 import SpriteSheet from "../SpriteSheet";
+import Head from "../Traits/Head";
+import TurnLeft from "../Traits/TurnLeft";
+import TurnRight from "../Traits/TurnRight";
+import MoveBackward from "../Traits/MoveBackward";
+import MoveForward from "../Traits/MoveForward";
+import Drag from "../Traits/Drag";
+import Break from "../Traits/Break";
+import Velocity from "../Traits/Velocity";
 
 export default class GarbageTruck extends Entity {
   constructor(spriteSheet: SpriteSheet) {
@@ -16,52 +25,53 @@ export default class GarbageTruck extends Entity {
     spriteSheet.define("E", 3, 47, 33, 28, new Vector(17, 17));
     spriteSheet.define("NE", 122, 6, 35, 30, new Vector(18, 18));
 
-    this.velocity = new Vector(-100, 0);
-
     this.heading = Vector.WEST;
-    this.currentSprite = this.spriteSheet.get(this.getHeading());
-  }
+    this.sprite = this.spriteSheet.get(Direction.WEST);
 
-  public update(deltaTime: number): void {
-    this.velocity = this.velocity.rotate(2);
-    this.heading = this.heading.rotate(2);
-    this.currentSprite = this.spriteSheet.get(this.getHeading());
-    this.position.add(this.velocity.multiply(deltaTime));
-  }
+    const moveBackwardsTrait = new MoveBackward(300, 400);
+    const moveForwardsTrait = new MoveForward(700, 500);
+    const turnLeftTrait = new TurnLeft(300, false);
+    const turnRightTrait = new TurnRight(300, false);
+    const headTrait = new Head();
+    const dragTrait = new Drag(100);
+    const breakTrait = new Break(400);
+    const velocityTrait = new Velocity();
 
-  public setVelocity(velocity: Vector): void {
-    this.velocity = velocity;
-  }
+    this.addTrait(moveForwardsTrait);
+    this.addTrait(moveBackwardsTrait);
+    this.addTrait(turnRightTrait);
+    this.addTrait(turnLeftTrait);
+    this.addTrait(headTrait);
+    this.addTrait(breakTrait);
+    this.addTrait(dragTrait);
+    this.addTrait(velocityTrait);
 
-  private getHeading(): Direction {
-    const north = Vector.NORTH;
-    const angle = this.heading.angleBetween(north);
+    const keyboard = new KeyboardControl(true);
 
-    const OFFSET = 22.5;
+    keyboard.addKeyMapping(KEYS.W, {
+      [KEY_STATES.PRESSED]: () => moveForwardsTrait.activate(),
+      [KEY_STATES.RELEASED]: () => moveForwardsTrait.deactivate(),
+    });
 
-    if (OFFSET + 45 * 0 < angle && angle <= OFFSET + 45 * 1) {
-      return Direction.NORTH_EAST;
-    }
-    if (OFFSET + 45 * 1 < angle && angle <= OFFSET + 45 * 2) {
-      return Direction.EAST;
-    }
-    if (OFFSET + 45 * 2 < angle && angle <= OFFSET + 45 * 3) {
-      return Direction.SOUTH_EAST;
-    }
-    if (OFFSET + 45 * 3 < angle && angle <= OFFSET + 45 * 4) {
-      return Direction.SOUTH;
-    }
-    if (OFFSET + 45 * 4 < angle && angle <= OFFSET + 45 * 5) {
-      return Direction.SOUTH_WEST;
-    }
-    if (OFFSET + 45 * 5 < angle && angle <= OFFSET + 45 * 6) {
-      return Direction.WEST;
-    }
-    if (OFFSET + 45 * 6 < angle && angle <= OFFSET + 45 * 7) {
-      return Direction.NORTH_WEST;
-    }
+    keyboard.addKeyMapping(KEYS.S, {
+      [KEY_STATES.PRESSED]: () => moveBackwardsTrait.activate(),
+      [KEY_STATES.RELEASED]: () => moveBackwardsTrait.deactivate(),
+    });
 
-    return Direction.NORTH;
+    keyboard.addKeyMapping(KEYS.A, {
+      [KEY_STATES.PRESSED]: () => turnLeftTrait.activate(),
+      [KEY_STATES.RELEASED]: () => turnLeftTrait.deactivate(),
+    });
+
+    keyboard.addKeyMapping(KEYS.D, {
+      [KEY_STATES.PRESSED]: () => turnRightTrait.activate(),
+      [KEY_STATES.RELEASED]: () => turnRightTrait.deactivate(),
+    });
+
+    keyboard.addKeyMapping(KEYS.SPACE, {
+      [KEY_STATES.PRESSED]: () => breakTrait.activate(),
+      [KEY_STATES.RELEASED]: () => breakTrait.deactivate(),
+    });
   }
 
   public draw(context: CanvasRenderingContext2D) {
@@ -71,7 +81,7 @@ export default class GarbageTruck extends Entity {
     context.beginPath();
     context.arc(this.position.x, this.position.y, 12, 0, 2 * Math.PI);
 
-    const heading = this.heading.fixedLength(18);
+    const heading = this.heading.setLength(18);
     heading.add(this.position);
 
     context.moveTo(this.position.x, this.position.y);
