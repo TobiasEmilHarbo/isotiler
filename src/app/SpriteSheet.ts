@@ -5,9 +5,14 @@ export default class SpriteSheet {
   private sprites = new Map<string, Sprite>();
   constructor(
     private image: HTMLImageElement,
-    private spriteWidth?: number,
-    private spriteHeight?: number
+    private defaultSpriteWidth?: number,
+    private defaultSpriteHeight?: number
   ) {}
+
+  public setDefaultSpriteSize(width: number, height: number) {
+    this.defaultSpriteWidth = width;
+    this.defaultSpriteHeight = height;
+  }
 
   public define(
     name: string,
@@ -18,8 +23,8 @@ export default class SpriteSheet {
     origin?: Vector
   ): void {
     const buffer = document.createElement("canvas");
-    buffer.width = width ? width : this.spriteWidth;
-    buffer.height = height ? height : this.spriteHeight;
+    buffer.width = width ? width : this.defaultSpriteWidth;
+    buffer.height = height ? height : this.defaultSpriteHeight;
 
     buffer
       .getContext("2d")

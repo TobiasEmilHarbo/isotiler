@@ -6,13 +6,13 @@ export default class TurnRight extends Turn {
     if (!this.activated) return;
     if (!this.turnInPlace && entity.velocity.magnitude() == 0) return;
 
-    const angleOffHeading = entity.velocity.angleBetween(entity.heading);
+    const angleOfHeading = entity.velocity.angleBetween(entity.heading);
+    const reversing = angleOfHeading <= 270 && 90 <= angleOfHeading;
 
     const speed = entity.velocity.magnitude();
 
-    const reversing = angleOffHeading <= 270 && 90 <= angleOffHeading;
-
     const turn = !reversing ? this.turningSpeed : -this.turningSpeed;
+
     entity.heading = entity.heading.rotate(turn * speed * deltaTime);
   }
 }

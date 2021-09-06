@@ -28,8 +28,8 @@ export default class GarbageTruck extends Entity {
     this.heading = Vector.WEST;
     this.sprite = this.spriteSheet.get(Direction.WEST);
 
-    const moveBackwardsTrait = new MoveBackward(300, 400);
-    const moveForwardsTrait = new MoveForward(700, 500);
+    const moveBackwardsTrait = new MoveBackward(200, 400);
+    const moveForwardsTrait = new MoveForward(400, 500);
     const turnLeftTrait = new TurnLeft(300, false);
     const turnRightTrait = new TurnRight(300, false);
     const headTrait = new Head();
@@ -77,17 +77,17 @@ export default class GarbageTruck extends Entity {
   public draw(context: CanvasRenderingContext2D) {
     super.draw(context);
 
-    context.strokeStyle = "red";
-    context.beginPath();
-    context.arc(this.position.x, this.position.y, 12, 0, 2 * Math.PI);
+    // context.strokeStyle = "red";
+    // context.beginPath();
+    // context.arc(this.position.x, this.position.y, 12, 0, 2 * Math.PI);
 
-    const heading = this.heading.setLength(18);
-    heading.add(this.position);
+    // const heading = this.heading.setLength(18);
+    // heading.add(this.position);
 
-    context.moveTo(this.position.x, this.position.y);
-    context.lineTo(heading.x, heading.y);
-    context.closePath();
+    // context.moveTo(this.position.x, this.position.y);
+    // context.lineTo(heading.x, heading.y);
+    // context.closePath();
 
-    context.stroke();
+    // context.stroke();
   }
 }

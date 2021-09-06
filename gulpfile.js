@@ -16,7 +16,8 @@ browserSync.init({
 });
 const paths = {
   pages: ['src/*.html'],
-  resources: ['src/app/**/*.png']
+  resources: ['src/app/**/*.png'],
+  json: ['src/app/**/*.json']
 };
 const watchedBrowserify = watchify(
   browserify({
@@ -28,6 +29,7 @@ const watchedBrowserify = watchify(
   }).plugin(tsify),
 );
 gulp.task('copy-html', () => gulp.src(paths.pages).pipe(gulp.dest('dist')));
+gulp.task('copy-json', () => gulp.src(paths.json).pipe(gulp.dest('dist')));
 gulp.task('copy-resources', () => gulp.src(paths.resources).pipe(gulp.dest('dist')));
 function bundle() {
   return watchedBrowserify
@@ -46,7 +48,7 @@ function bundle() {
       stream: true,
     }));
 }
-gulp.task('default', gulp.series(gulp.parallel('copy-html'), gulp.parallel('copy-resources'), bundle));
+gulp.task('default', gulp.series(gulp.parallel('copy-html'), gulp.parallel('copy-resources'), gulp.parallel('copy-json'), bundle));
 watchedBrowserify.on('update', bundle);
 watchedBrowserify.on('error', bundle);
 watchedBrowserify.on('log', fancyLog);

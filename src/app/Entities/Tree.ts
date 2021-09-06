@@ -17,11 +17,11 @@ export class Tree extends Entity {
   public draw(context: CanvasRenderingContext2D) {
     super.draw(context);
 
-    context.strokeStyle = "red";
-    context.beginPath();
-    context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-    context.closePath();
-    context.stroke();
+    // context.strokeStyle = "red";
+    // context.beginPath();
+    // context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+    // context.closePath();
+    // context.stroke();
   }
 
   public update(deltaTime: number): void {}

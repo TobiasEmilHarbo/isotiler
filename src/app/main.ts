@@ -1,66 +1,80 @@
 import { forkJoin } from "rxjs";
-import KeyboardControl, { KEYS, KEY_STATES } from "./KeyboardControl";
 import Vector from "./Vector";
 import Canvas from "./Canvas";
 import GarbageTruck from "./Entities/GarbageTruck";
-import { loadImage } from "./library/loaders";
-import tileMap from "./resources/tileMap";
-import SpriteSheet from "./SpriteSheet";
-import TileRenderer from "./TileRender";
+import { spriteSheetLoader, worldLoader } from "./library/loaders";
 import Timer from "./Timer";
+import { EntityRenderer } from "./Renderers/EntityRenderer";
+import LayerCompositor from "./Renderers/LayerCompositor";
+import Entity from "./Entities/Entity";
+import { ConstructionLineRenderer } from "./Renderers/ContructionLineRenderer";
+import TileRenderer from "./Renderers/TileRender";
 import { Tree } from "./Entities/Tree";
-import { EntityRenderer } from "./EntityRenderer";
 
 const canvas = new Canvas(896, 448);
 canvas.appendTo(document.body);
 
 forkJoin({
-  groundSprites: loadImage("./resources/ground.png"),
-  garbageTruckSprites: loadImage("./resources/garbage-truck.png"),
-  treeSprites: loadImage("./resources/tree.png"),
-})
-  .pipe()
-  .subscribe(({ groundSprites, garbageTruckSprites, treeSprites }) => {
-    const groundSpriteSheet = new SpriteSheet(groundSprites, 128, 64);
-    groundSpriteSheet.define("grass-0", 0, 0);
-    groundSpriteSheet.define("grass-1", 128, 0);
+  grid: worldLoader("one"),
+  garbageTruckSprites: spriteSheetLoader("./resources/garbage-truck.png"),
+  treeSprites: spriteSheetLoader("./resources/tree.png"),
+}).subscribe(({ grid, garbageTruckSprites, treeSprites }) => {
+  const entities = new Array<Entity>();
 
-    const treeSpriteSheet = new SpriteSheet(treeSprites);
-    const tree = new Tree(treeSpriteSheet);
-    tree.position = new Vector(610, 240);
+  // const tree = new Tree(treeSprites);
+  // tree.position = new Vector(610, 240);
 
-    const tree2 = new Tree(treeSpriteSheet);
-    tree2.position = new Vector(560, 280);
+  const tree2 = new Tree(treeSprites);
+  tree2.position = new Vector(560, 280);
 
-    const garbageTruckSpriteSheet = new SpriteSheet(garbageTruckSprites);
+  const garbageTruck = new GarbageTruck(garbageTruckSprites);
+  garbageTruck.position = new Vector(448, 224);
 
-    const garbageTruck = new GarbageTruck(garbageTruckSpriteSheet);
-    garbageTruck.position = new Vector(448, 224);
+  const tileRenderer = new TileRenderer(grid);
+  entities.push(tree2);
+  // entityRenderer.add(tree2);
+  entities.push(garbageTruck);
 
-    const tileRenderer = new TileRenderer(7, 7, groundSpriteSheet, tileMap);
+  const entityRenderer = new EntityRenderer(entities);
+  const lineRenderer = new ConstructionLineRenderer(entities);
 
-    const timer = new Timer();
+  const compositor = new LayerCompositor();
+  compositor.addLayer(tileRenderer);
+  compositor.addLayer(entityRenderer);
+  compositor.addLayer(lineRenderer);
 
-    const entityRenderer = new EntityRenderer();
+  const timer = new Timer();
 
-    // entityRenderer.add(tree);
-    // entityRenderer.add(tree2);
-    entityRenderer.add(garbageTruck);
-
-    timer.onUpdate((deltaTime) => {
-      canvas.clear();
-
-      entityRenderer.update();
-
-      tileRenderer.draw(canvas.context);
-
-      // garbageTruck.draw(canvas.context);
-      // tree.draw(canvas.context);
-      // tree2.draw(canvas.context);
-      entityRenderer.draw(canvas.context);
-
-      garbageTruck.update(deltaTime);
-    });
-
-    timer.start();
+  timer.onUpdate((deltaTime) => {
+    canvas.clear();
+    compositor.update(deltaTime);
+    compositor.draw(canvas.context);
   });
+
+  timer.start();
+
+  document.querySelector("canvas").addEventListener("mouseup", (event) => {
+    const tileWidth = 128;
+    const tileHeight = 64;
+
+    const determinate = (tileWidth * tileHeight) / 2;
+
+    const rows = 7;
+
+    const offset = (rows * Math.pow(tileHeight, 2)) / 2;
+
+    const x =
+      ((event.offsetX * tileHeight) / 2 +
+        (event.offsetY * tileWidth) / 2 -
+        offset) /
+      determinate;
+
+    const y =
+      ((event.offsetX * -tileHeight) / 2 +
+        (event.offsetY * tileWidth) / 2 +
+        offset) /
+      determinate;
+
+    console.log("TILE:", Math.floor(x), Math.floor(y));
+  });
+});

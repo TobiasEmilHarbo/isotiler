@@ -2,6 +2,7 @@
   "include": ["src/**/*.ts"],
   "compilerOptions": {
     "moduleResolution": "node",
+    "module": "esnext",
     "noImplicitAny": true,
     "target": "es2015",
     "lib": ["ES2017","DOM"]
