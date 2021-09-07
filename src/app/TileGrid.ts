@@ -4,8 +4,16 @@ export default class TileGrid {
   private tiles = new Array<Tile>();
   private grid = new Map<number, Map<number, Tile>>();
 
-  public columns: number = 0;
-  public rows: number = 0;
+  private _columns: number = 0;
+  private _rows: number = 0;
+
+  public get columns(): number {
+    return this._columns + 1;
+  }
+
+  public get rows(): number {
+    return this._rows + 1;
+  }
 
   public add(tile: Tile) {
     this.tiles.push(tile);
@@ -15,8 +23,8 @@ export default class TileGrid {
 
       column.set(tile.row, tile);
 
-      this.columns = Math.max(tile.column, this.columns);
-      this.rows = Math.max(tile.row, this.rows);
+      this._columns = Math.max(tile.column, this._columns);
+      this._rows = Math.max(tile.row, this._rows);
       return;
     }
 
@@ -26,8 +34,8 @@ export default class TileGrid {
 
     this.grid.set(tile.column, newRow);
 
-    this.columns = Math.max(tile.column, this.columns);
-    this.rows = Math.max(tile.row, this.rows);
+    this._columns = Math.max(tile.column, this._columns);
+    this._rows = Math.max(tile.row, this._rows);
   }
 
   public get(columnIndex: number, rowIndex: number): Tile {

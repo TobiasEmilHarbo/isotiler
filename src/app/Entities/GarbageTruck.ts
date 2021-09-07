@@ -2,7 +2,7 @@ import Vector from "../Vector";
 import KeyboardControl, { KEYS, KEY_STATES } from "../KeyboardControl";
 import Entity from "./Entity";
 import { Direction } from "../library/Direction";
-import SpriteSheet from "../SpriteSheet";
+import SpriteSheet from "../sprites/SpriteSheet";
 import Head from "../Traits/Head";
 import TurnLeft from "../Traits/TurnLeft";
 import TurnRight from "../Traits/TurnRight";
@@ -11,6 +11,7 @@ import MoveForward from "../Traits/MoveForward";
 import Drag from "../Traits/Drag";
 import Break from "../Traits/Break";
 import Velocity from "../Traits/Velocity";
+import Circle from "../geometry/Circle";
 
 export default class GarbageTruck extends Entity {
   constructor(spriteSheet: SpriteSheet) {
@@ -26,6 +27,7 @@ export default class GarbageTruck extends Entity {
     spriteSheet.define("NE", 122, 6, 35, 30, new Vector(18, 18));
 
     this.heading = Vector.WEST;
+    this._hitBox = new Circle(this.position, 12);
     this.sprite = this.spriteSheet.get(Direction.WEST);
 
     const moveBackwardsTrait = new MoveBackward(200, 400);

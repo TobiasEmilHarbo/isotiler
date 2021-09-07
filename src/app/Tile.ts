@@ -1,5 +1,5 @@
 import { Drawable } from "./library/Drawable";
-import Sprite from "./Sprite";
+import Sprite from "./sprites/Sprite";
 import Vector from "./Vector";
 
 export default class Tile implements Drawable {
@@ -38,6 +38,10 @@ export default class Tile implements Drawable {
 
   public get height() {
     return this.sprite.height;
+  }
+
+  public get center(): Vector {
+    return new Vector(this.x + this.width / 2, this.y + this.height / 2);
   }
 
   public draw(context: CanvasRenderingContext2D): void {

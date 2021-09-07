@@ -1,15 +1,13 @@
 import LayerRenderer from "./LayerRenderer";
 import TileGrid from "../TileGrid";
-
-const TILE_WIDTH: number = 128;
-const TILE_HEIGHT: number = 64;
+import Tile from "../Tile";
 
 export default class TileRenderer implements LayerRenderer {
   private buffer = document.createElement("canvas");
 
   constructor(private grid: TileGrid) {
-    this.buffer.width = TILE_WIDTH * this.grid.columns;
-    this.buffer.height = TILE_HEIGHT * this.grid.rows;
+    this.buffer.width = Tile.WIDTH * this.grid.columns;
+    this.buffer.height = Tile.HEIGHT * this.grid.rows;
     for (let column = 0; column < this.grid.columns; column++) {
       for (let row = 0; row < this.grid.rows; row++) {
         const tile = this.grid.get(column, row);

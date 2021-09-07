@@ -1,4 +1,4 @@
-import Vector from "./Vector";
+import Vector from "./../Vector";
 import Sprite from "./Sprite";
 
 export default class SpriteSheet {

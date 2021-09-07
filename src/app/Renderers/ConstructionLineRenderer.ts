@@ -10,9 +10,10 @@ export class ConstructionLineRenderer implements LayerRenderer {
     for (let index = this.entities.length - 1; index >= 0; index--) {
       const entity = this.entities[index];
 
+      entity.hitBox.draw(context);
+
       context.strokeStyle = "red";
       context.beginPath();
-      context.arc(entity.position.x, entity.position.y, 12, 0, 2 * Math.PI);
 
       const heading = entity.heading.setLength(18);
       heading.add(entity.position);

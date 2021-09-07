@@ -1,8 +1,10 @@
 import Vector from "../Vector";
 import { Drawable } from "../library/Drawable";
-import Sprite from "../Sprite";
-import SpriteSheet from "../SpriteSheet";
+import Sprite from "../sprites/Sprite";
+import SpriteSheet from "../sprites/SpriteSheet";
 import Trait from "../Traits/Trait";
+import Shape from "../geometry/Shape";
+import Circle from "../geometry/Circle";
 
 export default abstract class Entity implements Drawable {
   private _position = new Vector();
@@ -10,11 +12,16 @@ export default abstract class Entity implements Drawable {
   private _heading = Vector.NORTH;
   private _sprite: Sprite = Sprite.EMPTY;
 
+  protected _hitBox: Shape;
+
   private traits = new Array<Trait>();
 
-  constructor(protected spriteSheet: SpriteSheet) {}
+  constructor(protected spriteSheet: SpriteSheet) {
+    this._hitBox = new Circle(this.position, 0);
+  }
 
   public set position(position: Vector) {
+    this._hitBox.setPosition(position);
     this._position = position;
   }
 
@@ -44,6 +51,10 @@ export default abstract class Entity implements Drawable {
 
   public set sprite(sprite: Sprite) {
     this._sprite = sprite;
+  }
+
+  public get hitBox(): Shape {
+    return this._hitBox;
   }
 
   public setSprite(spriteName: string) {

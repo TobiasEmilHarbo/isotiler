@@ -1,0 +1,6 @@
+{
+  "garbageTruck": {
+    "sprite": "garbage-truck.png"
+  },
+  "tree": { "sprite": "tree.png" }
+}
