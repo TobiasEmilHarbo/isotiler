@@ -12,7 +12,7 @@ import Drag from "../Traits/Drag";
 import Break from "../Traits/Break";
 import Velocity from "../Traits/Velocity";
 import Circle from "../geometry/Circle";
-import HitBox from "../Traits/HitBox";
+import RigidBody from "../Traits/RigidBody";
 
 export default class GarbageTruck extends Entity {
   constructor(spriteSheet: SpriteSheet, entities: Array<Entity>) {
@@ -72,6 +72,6 @@ export default class GarbageTruck extends Entity {
     this.addTrait(breakTrait);
     this.addTrait(new Drag(100));
     this.addTrait(new Velocity());
-    this.addTrait(new HitBox(entities));
+    this.addTrait(new RigidBody(entities));
   }
 }

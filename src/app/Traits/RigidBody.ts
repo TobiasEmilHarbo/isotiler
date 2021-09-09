@@ -3,7 +3,7 @@ import Circle from "../geometry/Circle";
 import Vector from "../Vector";
 import Trait from "./Trait";
 
-export default class HitBox extends Trait {
+export default class RigidBody extends Trait {
   constructor(private entities: Array<Entity>) {
     super();
   }
@@ -27,6 +27,11 @@ export default class HitBox extends Trait {
             const currentSpeed = entity.velocity.magnitude();
 
             const newSpeed = currentSpeed - 2 * deltaTime;
+
+            if (newSpeed <= 0) {
+              entity.velocity = new Vector();
+              return;
+            }
 
             entity.velocity = entity.velocity.setLength(newSpeed);
           }
