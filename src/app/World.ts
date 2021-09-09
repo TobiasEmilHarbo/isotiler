@@ -2,6 +2,7 @@ import { Entities } from "./Entities/Entities";
 import Entity from "./Entities/Entity";
 import { EntityFactory } from "./Entities/EntityFactory";
 import { ConstructionLineRenderer } from "./Renderers/ConstructionLineRenderer";
+import { TileConstructionLineRenderer } from "./Renderers/TileConstructionLineRenderer";
 import { EntityRenderer } from "./Renderers/EntityRenderer";
 import LayerCompositor from "./Renderers/LayerCompositor";
 import TileRenderer from "./Renderers/TileRender";
@@ -22,12 +23,15 @@ export default class World {
     this.entities.push(garbageTruck);
 
     const tileRenderer = new TileRenderer(this.tileGrid);
+    const tileLineRenderer = new TileConstructionLineRenderer(this.tileGrid);
+
     const entityRenderer = new EntityRenderer(this.entities);
     const lineRenderer = new ConstructionLineRenderer(this.entities);
 
     this.compositor.addLayer(tileRenderer);
+    // this.compositor.addLayer(tileLineRenderer);
     this.compositor.addLayer(entityRenderer);
-    this.compositor.addLayer(lineRenderer);
+    // this.compositor.addLayer(lineRenderer);
   }
 
   public draw(context: CanvasRenderingContext2D) {

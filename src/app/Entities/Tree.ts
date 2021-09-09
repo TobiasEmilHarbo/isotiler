@@ -4,8 +4,8 @@ import Entity from "./Entity";
 import Circle from "../geometry/Circle";
 
 export class Tree extends Entity {
-  constructor(spriteSheet: SpriteSheet) {
-    super(spriteSheet);
+  constructor(spriteSheet: SpriteSheet, entities: Array<Entity>) {
+    super(spriteSheet, entities);
 
     spriteSheet.define("tree", 2, 1, 96, 106, new Vector(50, 93));
 

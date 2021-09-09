@@ -20,10 +20,12 @@ export default class Vector {
     return this._z;
   }
 
-  public add(vector: Vector) {
-    this._x += vector.x;
-    this._y += vector.y;
-    this._z += vector.z;
+  public add(other: Vector): Vector {
+    return new Vector(this._x + other.x, this._y + other.y, this._z + other.z);
+  }
+
+  public subtract(other: Vector): Vector {
+    return new Vector(this._x - other.x, this._y - other.y, this._z - other.z);
   }
 
   public setLength(length: number): Vector {
@@ -94,6 +96,11 @@ export default class Vector {
 
   public negate(): Vector {
     return this.multiply(-1);
+  }
+
+  public distanceTo(other: Vector) {
+    var difference = this.subtract(other);
+    return difference.magnitude();
   }
 
   public clone(): Vector {

@@ -108,12 +108,12 @@ export const worldLoader = (name: string): Observable<World> => {
     entitySpriteSheetFactoryLoader(),
   ]).pipe(
     switchMap(([worlds, entitySpriteSheets]) => {
-      const entityFactory = new EntityFactory(entitySpriteSheets);
+      const entities = new Array<Entity>();
+      const entityFactory = new EntityFactory(entitySpriteSheets, entities);
       const world = worlds[name];
 
       return tileGridLoader(world).pipe(
         map((grid: TileGrid) => {
-          const entities = new Array<Entity>();
           for (let x = 0; x < world.columns; x++) {
             const row = world.entities[x];
 

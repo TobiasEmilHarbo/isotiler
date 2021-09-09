@@ -16,12 +16,15 @@ export default abstract class Entity implements Drawable {
 
   private traits = new Array<Trait>();
 
-  constructor(protected spriteSheet: SpriteSheet) {
+  constructor(
+    protected spriteSheet: SpriteSheet,
+    protected entities: Array<Entity>
+  ) {
     this._hitBox = new Circle(this.position, 0);
   }
 
   public set position(position: Vector) {
-    this._hitBox.setPosition(position);
+    this._hitBox.position = position;
     this._position = position;
   }
 

@@ -3,6 +3,6 @@ import Trait from "./Trait";
 
 export default class Velocity extends Trait {
   public update(entity: Entity): void {
-    entity.position.add(entity.velocity);
+    entity.position = entity.position.add(entity.velocity);
   }
 }

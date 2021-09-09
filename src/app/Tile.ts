@@ -1,12 +1,11 @@
+import { Rectangle } from "./geometry/Rectangle";
+import Shape from "./geometry/Shape";
 import { Drawable } from "./library/Drawable";
 import Sprite from "./sprites/Sprite";
 import Vector from "./Vector";
 
 export default class Tile implements Drawable {
-  private A: Vector;
-  private B: Vector;
-  private C: Vector;
-  private D: Vector;
+  private _perimeter: Rectangle;
 
   public static WIDTH: number = 128;
   public static HEIGHT: number = 64;
@@ -18,26 +17,32 @@ export default class Tile implements Drawable {
     private y: number,
     private sprite: Sprite
   ) {
-    this.A = new Vector(this.x + this.width / 2, this.y);
-    this.B = new Vector(this.x + this.width, this.y + this.height / 2);
-    this.C = new Vector(this.x + this.width / 2, this.y + this.height);
-    this.D = new Vector(this.x, this.y + this.height / 2);
+    this._perimeter = new Rectangle(
+      new Vector(this.x + this.width / 2, this.y),
+      new Vector(this.x + this.width, this.y + this.height / 2),
+      new Vector(this.x + this.width / 2, this.y + this.height),
+      new Vector(this.x, this.y + this.height / 2)
+    );
   }
 
-  public get column() {
+  public get column(): number {
     return this._column;
   }
 
-  public get row() {
+  public get row(): number {
     return this._row;
   }
 
-  public get width() {
+  public get width(): number {
     return this.sprite.width;
   }
 
-  public get height() {
+  public get height(): number {
     return this.sprite.height;
+  }
+
+  public get perimeter(): Shape {
+    return this._perimeter;
   }
 
   public get center(): Vector {
@@ -56,23 +61,5 @@ export default class Tile implements Drawable {
       this.width,
       this.height
     );
-
-    context.fillStyle = "orange";
-    context.font = "bold 14px verdana, sans-serif ";
-
-    context.fillText(
-      `${this.column},${this.row}`,
-      this.x + 128 / 2 - 10,
-      this.y + 64 / 2 + 5
-    );
-
-    context.strokeStyle = "orange";
-    context.beginPath();
-    context.moveTo(this.A.x, this.A.y);
-    context.lineTo(this.B.x, this.B.y);
-    context.lineTo(this.C.x, this.C.y);
-    context.lineTo(this.D.x, this.D.y);
-    context.closePath();
-    context.stroke();
   }
 }

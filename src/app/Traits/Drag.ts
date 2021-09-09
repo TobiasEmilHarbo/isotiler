@@ -6,6 +6,7 @@ export default class Drag extends Trait {
   constructor(private maxDragCoefficient: number) {
     super();
   }
+
   public update(entity: Entity, deltaTime: number): void {
     if (!(entity.velocity.magnitude() > 0)) return;
 

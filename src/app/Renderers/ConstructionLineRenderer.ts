@@ -1,4 +1,6 @@
 import Entity from "../Entities/Entity";
+import Tile from "../Tile";
+import TileGrid from "../TileGrid";
 import LayerRenderer from "./LayerRenderer";
 
 export class ConstructionLineRenderer implements LayerRenderer {
@@ -15,8 +17,7 @@ export class ConstructionLineRenderer implements LayerRenderer {
       context.strokeStyle = "red";
       context.beginPath();
 
-      const heading = entity.heading.setLength(18);
-      heading.add(entity.position);
+      const heading = entity.heading.setLength(18).add(entity.position);
 
       context.moveTo(entity.position.x, entity.position.y);
       context.lineTo(heading.x, heading.y);

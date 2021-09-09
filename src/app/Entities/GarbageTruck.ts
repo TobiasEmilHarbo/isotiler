@@ -12,10 +12,11 @@ import Drag from "../Traits/Drag";
 import Break from "../Traits/Break";
 import Velocity from "../Traits/Velocity";
 import Circle from "../geometry/Circle";
+import HitBox from "../Traits/HitBox";
 
 export default class GarbageTruck extends Entity {
-  constructor(spriteSheet: SpriteSheet) {
-    super(spriteSheet);
+  constructor(spriteSheet: SpriteSheet, entities: Array<Entity>) {
+    super(spriteSheet, entities);
 
     spriteSheet.define("N", 90, 8, 19, 27, new Vector(10, 16));
     spriteSheet.define("NW", 42, 5, 35, 30, new Vector(17, 19));
@@ -30,23 +31,11 @@ export default class GarbageTruck extends Entity {
     this._hitBox = new Circle(this.position, 12);
     this.sprite = this.spriteSheet.get(Direction.WEST);
 
-    const moveBackwardsTrait = new MoveBackward(200, 400);
-    const moveForwardsTrait = new MoveForward(400, 500);
-    const turnLeftTrait = new TurnLeft(300, false);
-    const turnRightTrait = new TurnRight(300, false);
-    const headTrait = new Head();
-    const dragTrait = new Drag(100);
+    const moveBackwardsTrait = new MoveBackward(100, 300);
+    const moveForwardsTrait = new MoveForward(175, 400);
+    const turnLeftTrait = new TurnLeft(900, false);
+    const turnRightTrait = new TurnRight(900, false);
     const breakTrait = new Break(400);
-    const velocityTrait = new Velocity();
-
-    this.addTrait(moveForwardsTrait);
-    this.addTrait(moveBackwardsTrait);
-    this.addTrait(turnRightTrait);
-    this.addTrait(turnLeftTrait);
-    this.addTrait(headTrait);
-    this.addTrait(breakTrait);
-    this.addTrait(dragTrait);
-    this.addTrait(velocityTrait);
 
     const keyboard = new KeyboardControl(true);
 
@@ -74,22 +63,15 @@ export default class GarbageTruck extends Entity {
       [KEY_STATES.PRESSED]: () => breakTrait.activate(),
       [KEY_STATES.RELEASED]: () => breakTrait.deactivate(),
     });
-  }
 
-  public draw(context: CanvasRenderingContext2D) {
-    super.draw(context);
-
-    // context.strokeStyle = "red";
-    // context.beginPath();
-    // context.arc(this.position.x, this.position.y, 12, 0, 2 * Math.PI);
-
-    // const heading = this.heading.setLength(18);
-    // heading.add(this.position);
-
-    // context.moveTo(this.position.x, this.position.y);
-    // context.lineTo(heading.x, heading.y);
-    // context.closePath();
-
-    // context.stroke();
+    this.addTrait(moveForwardsTrait);
+    this.addTrait(moveBackwardsTrait);
+    this.addTrait(turnRightTrait);
+    this.addTrait(turnLeftTrait);
+    this.addTrait(new Head());
+    this.addTrait(breakTrait);
+    this.addTrait(new Drag(100));
+    this.addTrait(new Velocity());
+    this.addTrait(new HitBox(entities));
   }
 }
