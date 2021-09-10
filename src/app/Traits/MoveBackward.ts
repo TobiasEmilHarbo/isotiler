@@ -11,7 +11,7 @@ export default class MoveBackward extends Move {
 
     const angleOfHeading = entity.velocity.angleBetween(entity.heading);
     const slowDown =
-      (270 < angleOfHeading && angleOfHeading < 0) ||
+      (270 < angleOfHeading && angleOfHeading < 360) ||
       (0 <= angleOfHeading && angleOfHeading < 90);
 
     if (slowDown && currentSpeed != 0) {
