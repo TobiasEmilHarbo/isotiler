@@ -10,6 +10,10 @@ export enum KEYS {
   S = "KeyS",
   D = "KeyD",
   SPACE = "Space",
+  ARROW_UP = "ArrowUp",
+  ARROW_LEFT = "ArrowLeft",
+  ARROW_DOWN = "ArrowDown",
+  ARROW_RIGHT = "ArrowRight",
 }
 
 export enum KEY_STATES {

@@ -1,11 +1,12 @@
 import LayerRenderer from "./LayerRenderer";
 import TileGrid from "../TileGrid";
 import Tile from "../Tile";
+import Camera from "../Camera";
 
 export default class TileRenderer implements LayerRenderer {
   private buffer = document.createElement("canvas");
 
-  constructor(private grid: TileGrid) {
+  constructor(private camera: Camera, private grid: TileGrid) {
     this.buffer.width = Tile.WIDTH * this.grid.columns;
     this.buffer.height = Tile.HEIGHT * this.grid.rows;
     for (let column = 0; column < this.grid.columns; column++) {
@@ -17,7 +18,11 @@ export default class TileRenderer implements LayerRenderer {
   }
 
   public draw(context: CanvasRenderingContext2D): void {
-    context.drawImage(this.buffer, 0, 0);
+    context.drawImage(
+      this.buffer,
+      this.camera.position.x,
+      this.camera.position.y
+    );
   }
 
   public update(): void {}

@@ -7,9 +7,13 @@ import { EntityRenderer } from "./Renderers/EntityRenderer";
 import LayerCompositor from "./Renderers/LayerCompositor";
 import TileRenderer from "./Renderers/TileRender";
 import TileGrid from "./TileGrid";
+import Camera from "./Camera";
+import KeyboardControl, { KEYS, KEY_STATES } from "./KeyboardControl";
+import Vector from "./Vector";
 
 export default class World {
   private compositor = new LayerCompositor();
+  private camera = new Camera();
 
   constructor(
     private tileGrid: TileGrid,
@@ -22,16 +26,53 @@ export default class World {
 
     this.entities.push(garbageTruck);
 
-    const tileRenderer = new TileRenderer(this.tileGrid);
-    const tileLineRenderer = new TileConstructionLineRenderer(this.tileGrid);
+    const tileRenderer = new TileRenderer(this.camera, this.tileGrid);
+    const tileLineRenderer = new TileConstructionLineRenderer(
+      this.camera,
+      this.tileGrid
+    );
 
-    const entityRenderer = new EntityRenderer(this.entities);
-    const lineRenderer = new ConstructionLineRenderer(this.entities);
+    const entityRenderer = new EntityRenderer(this.camera, this.entities);
+    const lineRenderer = new ConstructionLineRenderer(
+      this.camera,
+      this.entities
+    );
 
     this.compositor.addLayer(tileRenderer);
-    // this.compositor.addLayer(tileLineRenderer);
+    this.compositor.addLayer(tileLineRenderer);
     this.compositor.addLayer(entityRenderer);
-    // this.compositor.addLayer(lineRenderer);
+    this.compositor.addLayer(lineRenderer);
+
+    const keyboard = new KeyboardControl(true);
+
+    keyboard.addKeyMapping(KEYS.ARROW_UP, {
+      [KEY_STATES.PRESSED]: () => {
+        this.camera.position = this.camera.position.add(
+          Vector.NORTH.multiply(10)
+        );
+      },
+    });
+    keyboard.addKeyMapping(KEYS.ARROW_DOWN, {
+      [KEY_STATES.PRESSED]: () => {
+        this.camera.position = this.camera.position.add(
+          Vector.SOUTH.multiply(10)
+        );
+      },
+    });
+    keyboard.addKeyMapping(KEYS.ARROW_LEFT, {
+      [KEY_STATES.PRESSED]: () => {
+        this.camera.position = this.camera.position.add(
+          Vector.WEST.multiply(10)
+        );
+      },
+    });
+    keyboard.addKeyMapping(KEYS.ARROW_RIGHT, {
+      [KEY_STATES.PRESSED]: () => {
+        this.camera.position = this.camera.position.add(
+          Vector.EAST.multiply(10)
+        );
+      },
+    });
   }
 
   public draw(context: CanvasRenderingContext2D) {

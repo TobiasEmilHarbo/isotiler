@@ -70,8 +70,16 @@ export default abstract class Entity implements Drawable {
     this.traits.push(trait);
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
-    this.sprite.draw(context, this._position.x, this._position.y);
+  public draw(
+    context: CanvasRenderingContext2D,
+    offsetX?: number,
+    offsetY?: number
+  ): void {
+    this.sprite.draw(
+      context,
+      this._position.x + offsetX,
+      this._position.y + offsetY
+    );
   }
 
   public update(deltaTime: number): void {

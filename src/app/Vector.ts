@@ -1,6 +1,8 @@
 export default class Vector {
   public static readonly NORTH = new Vector(0, -1);
+  public static readonly SOUTH = new Vector(0, 1);
   public static readonly WEST = new Vector(-1, 0);
+  public static readonly EAST = new Vector(1, 0);
 
   constructor(
     private _x: number = 0,

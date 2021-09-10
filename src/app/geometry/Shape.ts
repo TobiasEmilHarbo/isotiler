@@ -14,9 +14,5 @@ export default abstract class Shape implements Drawable {
 
   public abstract intersects(other: Shape): boolean;
 
-  public abstract draw(
-    context: CanvasRenderingContext2D,
-    x?: number,
-    y?: number
-  ): void;
+  public abstract draw(context: CanvasRenderingContext2D): void;
 }

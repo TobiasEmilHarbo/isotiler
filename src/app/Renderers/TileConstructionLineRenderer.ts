@@ -1,3 +1,4 @@
+import Camera from "../Camera";
 import Tile from "../Tile";
 import TileGrid from "../TileGrid";
 import LayerRenderer from "./LayerRenderer";
@@ -5,7 +6,7 @@ import LayerRenderer from "./LayerRenderer";
 export class TileConstructionLineRenderer implements LayerRenderer {
   private tilePerimeterBuffer: HTMLCanvasElement;
 
-  constructor(tiles: TileGrid) {
+  constructor(private camera: Camera, tiles: TileGrid) {
     this.tilePerimeterBuffer = document.createElement("canvas");
     this.tilePerimeterBuffer.width = tiles.columns * Tile.WIDTH;
     this.tilePerimeterBuffer.height = tiles.rows * Tile.HEIGHT;
@@ -29,6 +30,10 @@ export class TileConstructionLineRenderer implements LayerRenderer {
   public update(deltaTime: number) {}
 
   public draw(context: CanvasRenderingContext2D): void {
-    context.drawImage(this.tilePerimeterBuffer, 0, 0);
+    context.drawImage(
+      this.tilePerimeterBuffer,
+      this.camera.position.x,
+      this.camera.position.y
+    );
   }
 }

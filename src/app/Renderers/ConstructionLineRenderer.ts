@@ -1,14 +1,16 @@
+import Camera from "../Camera";
 import Entity from "../Entities/Entity";
-import Tile from "../Tile";
-import TileGrid from "../TileGrid";
 import LayerRenderer from "./LayerRenderer";
 
 export class ConstructionLineRenderer implements LayerRenderer {
-  constructor(private entities: Array<Entity>) {}
+  constructor(private camera: Camera, private entities: Array<Entity>) {}
 
   public update(deltaTime: number) {}
 
   public draw(context: CanvasRenderingContext2D): void {
+    context.save();
+    context.translate(this.camera.position.x, this.camera.position.y);
+
     for (let index = this.entities.length - 1; index >= 0; index--) {
       const entity = this.entities[index];
 
@@ -25,5 +27,6 @@ export class ConstructionLineRenderer implements LayerRenderer {
 
       context.stroke();
     }
+    context.restore();
   }
 }

@@ -1,11 +1,9 @@
+import Camera from "../Camera";
 import Entity from "../Entities/Entity";
 import LayerRenderer from "./LayerRenderer";
 
 export class EntityRenderer implements LayerRenderer {
-  private entities: Array<Entity>;
-  constructor(entities: Array<Entity>) {
-    this.entities = [...entities];
-  }
+  constructor(private camera: Camera, private entities: Array<Entity>) {}
 
   public update(deltaTime: number) {
     this.entities.sort((a: Entity, b: Entity) => {
@@ -29,7 +27,7 @@ export class EntityRenderer implements LayerRenderer {
   public draw(context: CanvasRenderingContext2D): void {
     for (let index = this.entities.length - 1; index >= 0; index--) {
       const entity = this.entities[index];
-      entity.draw(context);
+      entity.draw(context, this.camera.position.x, this.camera.position.y);
     }
   }
 }

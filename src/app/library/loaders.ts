@@ -81,9 +81,13 @@ export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
       const grid = new TileGrid();
       for (let x = 0; x < world.columns; x++) {
         const row = world.tiles[x];
+        if (!row) continue;
 
         for (let y = 0; y < world.rows; y++) {
-          const spriteName = symbolSpriteMapper.get(row.charAt(y));
+          const symbol = row.charAt(y);
+          if (!symbol) continue;
+
+          const spriteName = symbolSpriteMapper.get(symbol);
           const sprite = sprites.get(`${spriteName}-0`);
 
           const sX =
@@ -116,10 +120,13 @@ export const worldLoader = (name: string): Observable<World> => {
         map((grid: TileGrid) => {
           for (let x = 0; x < world.columns; x++) {
             const row = world.entities[x];
+            if (!row) continue;
 
             for (let y = 0; y < world.rows; y++) {
-              const entityName = symbolEntityMapper.get(row.charAt(y));
+              const symbol = row.charAt(y);
+              if (!symbol) continue;
 
+              const entityName = symbolEntityMapper.get(symbol);
               if (!entityName) continue;
 
               const entity = entityFactory.getEntity(entityName);
