@@ -10,31 +10,34 @@ import TileGrid from "./TileGrid";
 import Camera from "./Camera";
 import KeyboardControl, { KEYS, KEY_STATES } from "./KeyboardControl";
 import Vector from "./Vector";
+import Tile from "./Tile";
 
 export default class World {
   private compositor = new LayerCompositor();
-  private camera = new Camera();
+  private _camera = new Camera();
 
   constructor(
     private tileGrid: TileGrid,
     private entities: Array<Entity>,
     private entityFactory: EntityFactory
   ) {
+    this._camera.screenPosition = new Vector(Tile.WIDTH, Tile.HEIGHT);
+
     const garbageTruck = this.entityFactory.getEntity(Entities.GARBAGE_TRUCK);
 
-    garbageTruck.position = this.tileGrid.get(2, 5).center;
+    garbageTruck.position = this.tileGrid.get(3, 4).center;
 
     this.entities.push(garbageTruck);
 
-    const tileRenderer = new TileRenderer(this.camera, this.tileGrid);
+    const tileRenderer = new TileRenderer(this._camera, this.tileGrid);
     const tileLineRenderer = new TileConstructionLineRenderer(
-      this.camera,
+      this._camera,
       this.tileGrid
     );
 
-    const entityRenderer = new EntityRenderer(this.camera, this.entities);
+    const entityRenderer = new EntityRenderer(this._camera, this.entities);
     const lineRenderer = new ConstructionLineRenderer(
-      this.camera,
+      this._camera,
       this.entities
     );
 
@@ -47,28 +50,28 @@ export default class World {
 
     keyboard.addKeyMapping(KEYS.ARROW_UP, {
       [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.add(
+        this._camera.position = this._camera.position.subtract(
           Vector.NORTH.multiply(10)
         );
       },
     });
     keyboard.addKeyMapping(KEYS.ARROW_DOWN, {
       [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.add(
+        this._camera.position = this._camera.position.subtract(
           Vector.SOUTH.multiply(10)
         );
       },
     });
     keyboard.addKeyMapping(KEYS.ARROW_LEFT, {
       [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.add(
+        this._camera.position = this._camera.position.subtract(
           Vector.WEST.multiply(10)
         );
       },
     });
     keyboard.addKeyMapping(KEYS.ARROW_RIGHT, {
       [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.add(
+        this._camera.position = this._camera.position.subtract(
           Vector.EAST.multiply(10)
         );
       },
@@ -77,6 +80,7 @@ export default class World {
 
   public draw(context: CanvasRenderingContext2D) {
     this.compositor.draw(context);
+    this._camera.draw(context);
   }
 
   public update(deltaTime: number) {

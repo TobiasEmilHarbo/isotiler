@@ -2,7 +2,7 @@ import { Drawable } from "../library/Drawable";
 import Vector from "../Vector";
 
 export default abstract class Shape implements Drawable {
-  private _position: Vector;
+  private _position: Vector = new Vector();
 
   public set position(position: Vector) {
     this._position = position;

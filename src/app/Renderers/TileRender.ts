@@ -18,11 +18,14 @@ export default class TileRenderer implements LayerRenderer {
   }
 
   public draw(context: CanvasRenderingContext2D): void {
+    context.save();
+    context.clip(this.camera.viewPort);
     context.drawImage(
       this.buffer,
       this.camera.position.x,
       this.camera.position.y
     );
+    context.restore();
   }
 
   public update(): void {}

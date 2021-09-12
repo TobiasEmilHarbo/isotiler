@@ -1,4 +1,7 @@
-export default class Vector {
+import Line from "./geometry/Line";
+import { Drawable } from "./library/Drawable";
+
+export default class Vector implements Drawable {
   public static readonly NORTH = new Vector(0, -1);
   public static readonly SOUTH = new Vector(0, 1);
   public static readonly WEST = new Vector(-1, 0);
@@ -46,6 +49,10 @@ export default class Vector {
     return Math.sqrt(
       Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2)
     );
+  }
+
+  public orientationInRelationTo(line: Line): number {
+    return Math.sign(this.subtract(line.A).cross(line.B.subtract(line.A)).z);
   }
 
   public rotate(degrees: number): Vector {
@@ -105,11 +112,33 @@ export default class Vector {
     return difference.magnitude();
   }
 
+  public projectedOnto(line: Line): Vector {
+    const projected = this.subtract(line.A);
+    const lineVector = line.B.subtract(line.A);
+
+    const scalar = projected.dot(lineVector) / lineVector.dot(lineVector);
+
+    return lineVector.multiply(scalar).add(line.A);
+  }
+
   public clone(): Vector {
     return new Vector(this.x, this.y, this.z);
   }
 
   public toString(): string {
     return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)})`;
+  }
+
+  public equalsTo(other: Vector): boolean {
+    return this.x == other.x && this.y == other.y && this.x == other.x;
+  }
+
+  public draw(context: CanvasRenderingContext2D): void {
+    context.strokeStyle = "red";
+
+    context.beginPath();
+    context.arc(this.x, this.y, 1, 0, 2 * Math.PI);
+
+    context.stroke();
   }
 }

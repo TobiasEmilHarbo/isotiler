@@ -1,11 +1,11 @@
-import { Rectangle } from "./geometry/Rectangle";
+import { Quadrilateral } from "./geometry/Quadrilateral";
 import Shape from "./geometry/Shape";
 import { Drawable } from "./library/Drawable";
 import Sprite from "./sprites/Sprite";
 import Vector from "./Vector";
 
 export default class Tile implements Drawable {
-  private _perimeter: Rectangle;
+  private _perimeter: Quadrilateral;
 
   public static WIDTH: number = 128;
   public static HEIGHT: number = 64;
@@ -17,7 +17,7 @@ export default class Tile implements Drawable {
     private y: number,
     private sprite: Sprite
   ) {
-    this._perimeter = new Rectangle(
+    this._perimeter = new Quadrilateral(
       new Vector(this.x + this.width / 2, this.y),
       new Vector(this.x + this.width, this.y + this.height / 2),
       new Vector(this.x + this.width / 2, this.y + this.height),

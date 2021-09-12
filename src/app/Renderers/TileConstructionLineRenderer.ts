@@ -14,6 +14,8 @@ export class TileConstructionLineRenderer implements LayerRenderer {
     const context = this.tilePerimeterBuffer.getContext("2d");
 
     tiles.asArray().forEach((tile) => {
+      context.strokeStyle = "orange";
+
       tile.perimeter.draw(context);
 
       context.fillStyle = "orange";
@@ -30,10 +32,15 @@ export class TileConstructionLineRenderer implements LayerRenderer {
   public update(deltaTime: number) {}
 
   public draw(context: CanvasRenderingContext2D): void {
+    context.save();
+    context.clip(this.camera.viewPort);
+
     context.drawImage(
       this.tilePerimeterBuffer,
       this.camera.position.x,
       this.camera.position.y
     );
+
+    context.restore();
   }
 }
