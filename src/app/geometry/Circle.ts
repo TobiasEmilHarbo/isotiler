@@ -40,6 +40,6 @@ export default class Circle extends Shape {
     const intersectingDistance = this._radius + other.radius;
     const distance = this.position.distanceTo(other.position);
 
-    return distance - intersectingDistance < 0;
+    return (distance - intersectingDistance).lessThan(0);
   }
 }

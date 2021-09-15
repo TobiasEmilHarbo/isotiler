@@ -121,7 +121,7 @@ export class Quadrilateral extends Shape {
         edge.contains(projection) &&
         projection
           .subtract(circle.position)
-          .magnitude.equalOrLessThan(circle.radius)
+          .magnitude.lessThanOrEqualTo(circle.radius)
       ) {
         return true;
       }

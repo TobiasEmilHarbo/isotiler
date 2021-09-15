@@ -17,30 +17,39 @@ worldLoader("one").subscribe((world) => {
   });
 
   timer.start();
-
-  // const mouse = new MouseControl(true);
-
-  // mouse.addEventMapping(MOUSE_EVENTS.MOUSE_DOWN, {
-  //   [BUTTON.RIGHT]: (coordinates) => {},
-  // });
 });
 
-Number.prototype.equals = function (other: number, precision: number = 4) {
+Number.prototype.equals = function (
+  other: number,
+  precision: number = 4
+): boolean {
   return (
     parseFloat(this.toFixed(precision)) == parseFloat(other.toFixed(precision))
   );
 };
 
-Number.prototype.equalOrLessThan = function (
+Number.prototype.lessThanOrEqualTo = function (
   other: number,
   precision: number = 4
-) {
+): boolean {
   return (
     parseFloat(this.toFixed(precision)) <= parseFloat(other.toFixed(precision))
   );
 };
 
-Number.prototype.lessThan = function (other: number, precision: number = 4) {
+Number.prototype.greaterThanOrEqualTo = function (
+  other: number,
+  precision?: number
+): boolean {
+  return (
+    parseFloat(this.toFixed(precision)) >= parseFloat(other.toFixed(precision))
+  );
+};
+
+Number.prototype.lessThan = function (
+  other: number,
+  precision: number = 4
+): boolean {
   return (
     parseFloat(this.toFixed(precision)) < parseFloat(other.toFixed(precision))
   );
