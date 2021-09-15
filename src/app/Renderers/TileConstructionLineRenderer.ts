@@ -33,13 +33,11 @@ export class TileConstructionLineRenderer implements LayerRenderer {
 
   public draw(context: CanvasRenderingContext2D): void {
     context.save();
-    context.clip(this.camera.viewPort);
+    context.clip(this.camera.screen);
 
-    context.drawImage(
-      this.tilePerimeterBuffer,
-      this.camera.position.x,
-      this.camera.position.y
-    );
+    const { x, y } = this.camera.position.negate();
+
+    context.drawImage(this.tilePerimeterBuffer, x, y);
 
     context.restore();
   }

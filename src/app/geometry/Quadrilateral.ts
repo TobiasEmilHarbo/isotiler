@@ -43,7 +43,7 @@ export class Quadrilateral extends Shape {
     return [this.A, this.B, this.C, this.D];
   }
 
-  private get edges(): Array<Line> {
+  public get edges(): Array<Line> {
     return [
       new Line(this.A, this.B),
       new Line(this.B, this.C),
@@ -55,23 +55,25 @@ export class Quadrilateral extends Shape {
   private getInfinityRayIntersectionCount(point: Vector): number {
     const overlappingVertices = Array<Vector>();
     const ray = new Line(point, new Vector(Infinity, point.y));
+
     return this.edges.filter((edge: Line) => {
-      if (edge.intersects(ray)) {
-        if (edge.A.y == point.y) {
-          if (!!overlappingVertices.find((point) => point.equalsTo(edge.A)))
-            return false;
-          overlappingVertices.push(edge.A);
-        }
+      if (!edge.intersects(ray)) return false;
 
-        if (edge.B.y == point.y) {
-          if (!!overlappingVertices.find((point) => point.equalsTo(edge.B)))
-            return false;
-          overlappingVertices.push(edge.B);
+      if (edge.A.y.equals(point.y)) {
+        if (!!overlappingVertices.find((point) => point.equalsTo(edge.A))) {
+          return false;
         }
-
-        return true;
+        overlappingVertices.push(edge.A);
       }
-      return false;
+
+      if (edge.B.y.equals(point.y)) {
+        if (!!overlappingVertices.find((point) => point.equalsTo(edge.B))) {
+          return false;
+        }
+        overlappingVertices.push(edge.B);
+      }
+
+      return true;
     }).length;
   }
 
@@ -99,24 +101,51 @@ export class Quadrilateral extends Shape {
   }
 
   private intersectsWithCircle(circle: Circle): boolean {
-    const distances = this.edges.filter((edge: Line) => {
-      const projection = circle.position.projectedOnto(edge);
-      if (edge.contains(projection)) {
-        const distanceToProjection = projection
-          .subtract(circle.position)
-          .magnitude();
-        return distanceToProjection < circle.radius;
+    const intersectedVertices = new Set();
+
+    const ray = new Line(
+      circle.position,
+      new Vector(Infinity, circle.position.y)
+    );
+
+    let rayIntersections = 0;
+
+    const edgeIntersections = this.edges.find((edge: Line) => {
+      if (edge.A.subtract(circle.position).magnitude.lessThan(circle.radius)) {
+        return true;
       }
 
-      return (
-        edge.A.subtract(circle.position).magnitude() < circle.radius ||
-        edge.B.subtract(circle.position).magnitude() < circle.radius
-      );
+      const projection = circle.position.projectedOnto(edge);
+
+      if (
+        edge.contains(projection) &&
+        projection
+          .subtract(circle.position)
+          .magnitude.equalOrLessThan(circle.radius)
+      ) {
+        return true;
+      }
+
+      if (!ray.intersects(edge)) return false;
+
+      if (edge.A.y.equals(circle.position.y)) {
+        if (!intersectedVertices.has(edge.A.toString())) {
+          rayIntersections++;
+          intersectedVertices.add(edge.A.toString());
+        }
+      } else if (edge.B.y.equals(circle.position.y)) {
+        if (!intersectedVertices.has(edge.B.toString())) {
+          rayIntersections++;
+          intersectedVertices.add(edge.B.toString());
+        }
+      } else {
+        rayIntersections++;
+      }
+
+      return false;
     });
 
-    if (distances.length > 0) return true;
-
-    return this.getInfinityRayIntersectionCount(circle.position) == 1;
+    return !!edgeIntersections || rayIntersections == 1;
   }
 
   public translate(translation: Vector): Quadrilateral {

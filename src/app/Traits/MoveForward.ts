@@ -16,7 +16,7 @@ export default class MoveForward extends Move {
 
     const acceleration = this.acceleration * deltaTime;
 
-    const currentSpeed = entity.velocity.magnitude();
+    const currentSpeed = entity.velocity.magnitude;
 
     const newSpeed = currentSpeed + acceleration;
 

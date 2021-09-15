@@ -9,7 +9,8 @@ export class ConstructionLineRenderer implements LayerRenderer {
 
   public draw(context: CanvasRenderingContext2D): void {
     context.save();
-    context.translate(this.camera.position.x, this.camera.position.y);
+    const { x, y } = this.camera.position.negate();
+    context.translate(x, y);
 
     for (let index = this.entities.length - 1; index >= 0; index--) {
       const entity = this.entities[index];

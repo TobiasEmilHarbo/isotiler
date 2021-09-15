@@ -16,7 +16,7 @@ export default abstract class Move extends Trait {
   protected slowDown(entity: Entity, deltaTime: number) {
     const dragCoefficient = this.acceleration * deltaTime;
 
-    const currentSpeed = entity.velocity.magnitude();
+    const currentSpeed = entity.velocity.magnitude;
 
     const newSpeed = currentSpeed - dragCoefficient;
 

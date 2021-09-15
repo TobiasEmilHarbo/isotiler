@@ -35,12 +35,15 @@ export class EntityRenderer implements LayerRenderer {
   }
 
   public draw(context: CanvasRenderingContext2D): void {
+    context.strokeStyle = "red";
     context.save();
-    context.clip(this.camera.viewPort);
+    context.clip(this.camera.screen);
+
+    const { x, y } = this.camera.position.negate();
 
     for (let index = this.entitiesInView.length - 1; index >= 0; index--) {
       const entity = this.entitiesInView[index];
-      entity.draw(context, this.camera.position.x, this.camera.position.y);
+      entity.draw(context, x, y);
     }
 
     context.restore();

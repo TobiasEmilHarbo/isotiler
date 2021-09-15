@@ -34,7 +34,7 @@ export default class Vector implements Drawable {
   }
 
   public setLength(length: number): Vector {
-    return this.multiply(length / this.magnitude());
+    return this.multiply(length / this.magnitude);
   }
 
   public multiply(scalar: number): Vector {
@@ -45,7 +45,7 @@ export default class Vector implements Drawable {
     return this.x * other.x + this.y * other.y + this.z * other.z;
   }
 
-  public magnitude(): number {
+  public get magnitude(): number {
     return Math.sqrt(
       Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2)
     );
@@ -75,8 +75,8 @@ export default class Vector implements Drawable {
   }
 
   private angleBetween180(other: Vector): number {
-    const magnitude1 = this.magnitude();
-    const magnitude2 = other.magnitude();
+    const magnitude1 = this.magnitude;
+    const magnitude2 = other.magnitude;
 
     if (magnitude1 == 0 || magnitude2 == 0) return 0;
 
@@ -109,7 +109,7 @@ export default class Vector implements Drawable {
 
   public distanceTo(other: Vector) {
     var difference = this.subtract(other);
-    return difference.magnitude();
+    return difference.magnitude;
   }
 
   public projectedOnto(line: Line): Vector {
@@ -130,15 +130,14 @@ export default class Vector implements Drawable {
   }
 
   public equalsTo(other: Vector): boolean {
-    return this.x == other.x && this.y == other.y && this.x == other.x;
+    return (
+      this.x.equals(other.x) && this.y.equals(other.y) && this.x.equals(other.x)
+    );
   }
 
   public draw(context: CanvasRenderingContext2D): void {
-    context.strokeStyle = "red";
-
     context.beginPath();
     context.arc(this.x, this.y, 1, 0, 2 * Math.PI);
-
     context.stroke();
   }
 }

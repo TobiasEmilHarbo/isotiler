@@ -1,3 +1,5 @@
+import { Drawable } from "./library/Drawable";
+
 export default class Canvas {
   private canvas: HTMLCanvasElement;
   private _context: CanvasRenderingContext2D;
@@ -25,6 +27,10 @@ export default class Canvas {
       sprite.width,
       sprite.height
     );
+  }
+
+  public draw(drawable: Drawable) {
+    drawable.draw(this.context);
   }
 
   public get context(): CanvasRenderingContext2D {

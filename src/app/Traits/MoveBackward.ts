@@ -7,7 +7,7 @@ export default class MoveBackward extends Move {
       return;
     }
 
-    const currentSpeed = entity.velocity.magnitude();
+    const currentSpeed = entity.velocity.magnitude;
 
     const angleOfHeading = entity.velocity.angleBetween(entity.heading);
     const slowDown =

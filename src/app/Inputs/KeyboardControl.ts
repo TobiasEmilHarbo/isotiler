@@ -28,7 +28,7 @@ enum KEYBOARD_EVENTS {
 
 class KeyboardListener {
   private static keyboardListener = new KeyboardListener();
-  private keyStates = new Map<string, KEY_STATES>();
+  private keyStates = new Map<KEYS, KEY_STATES>();
   private target: EventTarget = document;
 
   private listeners = Array<KeyboardControl>();
@@ -40,7 +40,7 @@ class KeyboardListener {
   }
 
   private onKeyEvent(event: KeyboardEvent): void {
-    const key = event.code;
+    const key = event.code as KEYS;
     const newState =
       event.type == KEYBOARD_EVENTS.KEY_DOWN
         ? KEY_STATES.PRESSED

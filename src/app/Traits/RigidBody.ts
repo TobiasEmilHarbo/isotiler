@@ -24,7 +24,7 @@ export default class RigidBody extends Trait {
 
             entity.position = otherEntity.position.add(newDistanceVector);
 
-            const currentSpeed = entity.velocity.magnitude();
+            const currentSpeed = entity.velocity.magnitude;
 
             const newSpeed = currentSpeed - 2 * deltaTime;
 

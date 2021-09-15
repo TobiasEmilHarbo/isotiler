@@ -8,11 +8,11 @@ export default class Drag extends Trait {
   }
 
   public update(entity: Entity, deltaTime: number): void {
-    if (!(entity.velocity.magnitude() > 0)) return;
+    if (!(entity.velocity.magnitude > 0)) return;
 
     const dragCoefficient = (this.maxDragCoefficient / 100) * deltaTime;
 
-    const currentSpeed = entity.velocity.magnitude();
+    const currentSpeed = entity.velocity.magnitude;
 
     const newSpeed = currentSpeed - dragCoefficient;
 

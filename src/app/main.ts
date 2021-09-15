@@ -1,10 +1,7 @@
 import Canvas from "./Canvas";
-import Circle from "./geometry/Circle";
-import Line from "./geometry/Line";
-import Rectangle from "./geometry/Rectangle";
+import MouseControl, { BUTTON, MOUSE_EVENTS } from "./Inputs/MouseControl";
 import { worldLoader } from "./library/loaders";
 import Timer from "./Timer";
-import Vector from "./Vector";
 
 const canvas = new Canvas(1024, 512);
 canvas.appendTo(document.body);
@@ -15,12 +12,36 @@ worldLoader("one").subscribe((world) => {
   timer.onUpdate((deltaTime) => {
     canvas.clear();
     world.update(deltaTime);
-    world.draw(canvas.context);
+
+    canvas.draw(world);
   });
 
   timer.start();
 
-  document
-    .querySelector("canvas")
-    .addEventListener("mouseup", ({ offsetX: x, offsetY: y }) => {});
+  // const mouse = new MouseControl(true);
+
+  // mouse.addEventMapping(MOUSE_EVENTS.MOUSE_DOWN, {
+  //   [BUTTON.RIGHT]: (coordinates) => {},
+  // });
 });
+
+Number.prototype.equals = function (other: number, precision: number = 4) {
+  return (
+    parseFloat(this.toFixed(precision)) == parseFloat(other.toFixed(precision))
+  );
+};
+
+Number.prototype.equalOrLessThan = function (
+  other: number,
+  precision: number = 4
+) {
+  return (
+    parseFloat(this.toFixed(precision)) <= parseFloat(other.toFixed(precision))
+  );
+};
+
+Number.prototype.lessThan = function (other: number, precision: number = 4) {
+  return (
+    parseFloat(this.toFixed(precision)) < parseFloat(other.toFixed(precision))
+  );
+};

@@ -10,17 +10,23 @@ export default class Timer {
   }
 
   private tick(time: number = 0): void {
-    this.accumulatedTime += (time - this.lastTime) / 1000;
+    if (this.lastTime != 0) {
+      this.accumulatedTime += (time - this.lastTime) / 1000;
 
-    while (this.accumulatedTime > this.deltaTime) {
-      this.update(this.deltaTime);
+      if (this.accumulatedTime > 1) {
+        this.accumulatedTime = 1;
+      }
 
-      this.accumulatedTime -= this.deltaTime;
+      while (this.accumulatedTime > this.deltaTime) {
+        this.update(this.deltaTime);
+
+        this.accumulatedTime -= this.deltaTime;
+      }
     }
 
-    requestAnimationFrame(this.tick.bind(this));
-
     this.lastTime = time;
+
+    requestAnimationFrame(this.tick.bind(this));
   }
 
   public start(): void {

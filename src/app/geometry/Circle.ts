@@ -1,4 +1,5 @@
 import Vector from "../Vector";
+import { Quadrilateral } from "./Quadrilateral";
 import Shape from "./Shape";
 
 export default class Circle extends Shape {
@@ -12,21 +13,33 @@ export default class Circle extends Shape {
   }
 
   public draw(context: CanvasRenderingContext2D): void {
-    context.strokeStyle = "red";
     context.beginPath();
     context.arc(this.position.x, this.position.y, this._radius, 0, 2 * Math.PI);
-
     context.stroke();
+
+    this.position.draw(context);
+  }
+
+  private intersectsWithQuadrilateral(other: Quadrilateral): boolean {
+    return other.intersects(this);
   }
 
   public intersects(other: Shape): boolean {
-    if (other instanceof Circle) {
-      const intersectingDistance = this._radius + other.radius;
-      const distance = this.position.distanceTo(other.position);
+    if (other instanceof Quadrilateral) {
+      return this.intersectsWithQuadrilateral(other);
+    }
 
-      return distance - intersectingDistance < 0;
+    if (other instanceof Circle) {
+      return this.intersectsWithCircle(other);
     }
 
     return false;
+  }
+
+  protected intersectsWithCircle(other: Circle): boolean {
+    const intersectingDistance = this._radius + other.radius;
+    const distance = this.position.distanceTo(other.position);
+
+    return distance - intersectingDistance < 0;
   }
 }

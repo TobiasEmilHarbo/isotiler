@@ -19,7 +19,7 @@ export default class Line implements Drawable {
   }
 
   private isParallelTo(other: Line): boolean {
-    return this.getSlope() == other.getSlope();
+    return this.getSlope().equals(other.getSlope());
   }
 
   public intersects(other: Line): boolean {
@@ -34,7 +34,7 @@ export default class Line implements Drawable {
   public contains(C: Vector): boolean {
     const lineBC = new Line(this.B, C);
 
-    if (lineBC.getSlope() != this.getSlope()) return false;
+    if (!lineBC.isParallelTo(this)) return false;
 
     return (
       Math.min(this.A.x, this.B.x) <= C.x &&
@@ -46,15 +46,6 @@ export default class Line implements Drawable {
 
   public draw(context: CanvasRenderingContext2D): void {
     this._A.draw(context);
-
-    context.fillStyle = "orange";
-    context.font = "10px verdana, sans-serif ";
-
-    context.fillText("A", this._A.x + 2, this._A.y + 5);
-
-    this._B.draw(context);
-
-    context.fillText("B", this._B.x + 2, this._B.y + 5);
 
     context.moveTo(this._A.x, this._A.y);
     context.lineTo(this._B.x, this._B.y);

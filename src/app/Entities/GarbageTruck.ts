@@ -1,5 +1,5 @@
 import Vector from "../Vector";
-import KeyboardControl, { KEYS, KEY_STATES } from "../KeyboardControl";
+import KeyboardControl, { KEYS, KEY_STATES } from "../Inputs/KeyboardControl";
 import Entity from "./Entity";
 import { Direction } from "../library/Direction";
 import SpriteSheet from "../sprites/SpriteSheet";
