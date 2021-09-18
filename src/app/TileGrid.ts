@@ -54,6 +54,17 @@ export default class TileGrid {
     return false;
   }
 
+  public forEach(
+    callback: (tile: Tile, column: number, row: number) => void
+  ): void {
+    for (let column = 0; column < this.columns; column++) {
+      for (let row = 0; row < this.rows; row++) {
+        const tile = this.get(column, row);
+        callback(tile, column, row);
+      }
+    }
+  }
+
   public asArray(): Array<Tile> {
     return this.tiles;
   }

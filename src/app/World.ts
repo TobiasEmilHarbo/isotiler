@@ -11,6 +11,7 @@ import Camera from "./Camera";
 import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
 import Vector from "./Vector";
 import Tile from "./Tile";
+import MouseControl, { BUTTON, MOUSE_EVENTS } from "./Inputs/MouseControl";
 
 export default class World {
   private compositor = new LayerCompositor();
@@ -29,7 +30,7 @@ export default class World {
 
     this.garbageTruck = this.entityFactory.getEntity(Entities.GARBAGE_TRUCK);
 
-    this.garbageTruck.position = this.tileGrid.get(3, 4).center;
+    this.garbageTruck.position = this.tileGrid.get(10, 10).center;
 
     this.entities.push(this.garbageTruck);
 
@@ -48,9 +49,9 @@ export default class World {
     );
 
     this.compositor.addLayer(tileRenderer);
-    this.compositor.addLayer(tileLineRenderer);
+    // this.compositor.addLayer(tileLineRenderer);
     this.compositor.addLayer(entityRenderer);
-    this.compositor.addLayer(lineRenderer);
+    // this.compositor.addLayer(lineRenderer);
 
     const keyboard = new KeyboardControl(true);
 
@@ -82,6 +83,13 @@ export default class World {
         );
       },
     });
+
+    const mouse = new MouseControl(true);
+    mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
+      [BUTTON.LEFT]: (coordinates) => {
+        this.camera.position = coordinates;
+      },
+    });
   }
 
   public get camera(): Camera {
@@ -90,11 +98,11 @@ export default class World {
 
   public draw(context: CanvasRenderingContext2D) {
     this.compositor.draw(context);
-    this._camera.draw(context);
+    // this.camera.draw(context);
   }
 
   public update(deltaTime: number) {
-    this.camera.update(deltaTime);
     this.compositor.update(deltaTime);
+    this.camera.update(deltaTime);
   }
 }

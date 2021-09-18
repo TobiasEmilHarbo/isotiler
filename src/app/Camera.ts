@@ -31,6 +31,8 @@ export default class Camera implements Drawable {
     this.position.draw(context);
     this._focus.draw(context);
 
+    if (!this.entityInFocus) return;
+
     const entityInFocusInScreenCoordinates = this.entityInFocus.position.add(
       this.position.negate()
     );

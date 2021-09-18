@@ -1,7 +1,5 @@
 import Camera from "../Camera";
 import Entity from "../Entities/Entity";
-import Tile from "../Tile";
-import TileGrid from "../TileGrid";
 import LayerRenderer from "./LayerRenderer";
 
 export class EntityRenderer implements LayerRenderer {

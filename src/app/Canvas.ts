@@ -15,18 +15,8 @@ export default class Canvas {
     this._context.scale(ratio, ratio);
   }
 
-  public drawSprite(sprite: HTMLCanvasElement, x: number, y: number) {
-    this._context.drawImage(
-      sprite,
-      0,
-      0,
-      sprite.width,
-      sprite.height,
-      x,
-      y,
-      sprite.width,
-      sprite.height
-    );
+  public drawOnto(context: CanvasRenderingContext2D, x: number, y: number) {
+    context.drawImage(this.canvas, x, y);
   }
 
   public draw(drawable: Drawable) {

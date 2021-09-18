@@ -77,23 +77,30 @@ export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
 
       sprites.define("grass-0", 0, 0);
       sprites.define("grass-1", 128, 0);
+      sprites.define("grass-4", 128 * 4, 0);
 
       const grid = new TileGrid();
-      for (let x = 0; x < world.columns; x++) {
+
+      const longestRow = parseInt(
+        world.tiles.reduce((rowA: string, rowB: string): string =>
+          Math.max(rowA.length, rowB.length).toString()
+        )
+      );
+
+      const mapScreenWidth = Tile.WIDTH * longestRow;
+
+      for (let x = 0; x < world.tiles.length; x++) {
         const row = world.tiles[x];
         if (!row) continue;
-
-        for (let y = 0; y < world.rows; y++) {
+        for (let y = 0; y < row.length; y++) {
           const symbol = row.charAt(y);
           if (!symbol) continue;
 
           const spriteName = symbolSpriteMapper.get(symbol);
-          const sprite = sprites.get(`${spriteName}-0`);
+          const sprite = sprites.get(`${spriteName}`);
 
           const sX =
-            (Tile.WIDTH * world.columns) / 2 +
-            (y - x) * (Tile.WIDTH / 2) -
-            Tile.WIDTH / 2;
+            mapScreenWidth / 2 + (y - x) * (Tile.WIDTH / 2) - Tile.WIDTH * 2.5;
 
           const sY = (y + x) * (Tile.HEIGHT / 2);
 
@@ -118,11 +125,12 @@ export const worldLoader = (name: string): Observable<World> => {
 
       return tileGridLoader(world).pipe(
         map((grid: TileGrid) => {
-          for (let x = 0; x < world.columns; x++) {
+          for (let x = 0; x < world.tiles.length; x++) {
             const row = world.entities[x];
+
             if (!row) continue;
 
-            for (let y = 0; y < world.rows; y++) {
+            for (let y = 0; y < row.length; y++) {
               const symbol = row.charAt(y);
               if (!symbol) continue;
 
@@ -130,7 +138,6 @@ export const worldLoader = (name: string): Observable<World> => {
               if (!entityName) continue;
 
               const entity = entityFactory.getEntity(entityName);
-
               const tile = grid.get(x, y);
               entity.position = tile.center;
               entities.push(entity);

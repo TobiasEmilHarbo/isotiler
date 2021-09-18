@@ -1,30 +1,31 @@
+import Buffer from "../Buffer";
 import Camera from "../Camera";
 import Tile from "../Tile";
 import TileGrid from "../TileGrid";
 import LayerRenderer from "./LayerRenderer";
 
 export class TileConstructionLineRenderer implements LayerRenderer {
-  private tilePerimeterBuffer: HTMLCanvasElement;
+  private buffer: Buffer;
 
   constructor(private camera: Camera, tiles: TileGrid) {
-    this.tilePerimeterBuffer = document.createElement("canvas");
-    this.tilePerimeterBuffer.width = tiles.columns * Tile.WIDTH;
-    this.tilePerimeterBuffer.height = tiles.rows * Tile.HEIGHT;
+    this.buffer = new Buffer(
+      Tile.WIDTH * tiles.rows - Tile.WIDTH / 2,
+      tiles.rows * Tile.HEIGHT
+    );
 
-    const context = this.tilePerimeterBuffer.getContext("2d");
+    tiles.forEach((tile) => {
+      this.buffer.context.strokeStyle = "orange";
 
-    tiles.asArray().forEach((tile) => {
-      context.strokeStyle = "orange";
+      this.buffer.draw(tile.perimeter);
 
-      tile.perimeter.draw(context);
+      this.buffer.context.fillStyle = "orange";
+      this.buffer.context.font = "bold 12px verdana, sans-serif ";
 
-      context.fillStyle = "orange";
-      context.font = "bold 14px verdana, sans-serif ";
-
-      context.fillText(
+      this.buffer.context.textAlign = "center";
+      this.buffer.context.fillText(
         `${tile.column},${tile.row}`,
-        tile.center.x - 10,
-        tile.center.y + 5
+        tile.center.x,
+        tile.center.y + 4
       );
     });
   }
@@ -33,11 +34,11 @@ export class TileConstructionLineRenderer implements LayerRenderer {
 
   public draw(context: CanvasRenderingContext2D): void {
     context.save();
-    context.clip(this.camera.screen);
+    // context.clip(this.camera.screen);
 
     const { x, y } = this.camera.position.negate();
 
-    context.drawImage(this.tilePerimeterBuffer, x, y);
+    this.buffer.drawOnTo(context, x, y);
 
     context.restore();
   }

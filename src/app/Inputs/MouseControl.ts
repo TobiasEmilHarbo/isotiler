@@ -19,9 +19,9 @@ export enum MOUSE_EVENTS {
 }
 
 export enum BUTTON {
-  RIGHT,
-  MIDDLE,
   LEFT,
+  MIDDLE,
+  RIGHT,
 }
 
 export enum MODIFIER {
@@ -77,12 +77,12 @@ export default class MouseControl {
     if (!this.eventMapping.has(type)) return;
 
     const actions = this.eventMapping.get(type);
-    const stateAction = actions[event.button as BUTTON];
+    const action = actions[event.button as BUTTON];
     // event.preventDefault();
 
-    if (!stateAction) return;
+    if (!action) return;
 
-    stateAction(new Vector(event.offsetX, event.offsetY), {
+    action(new Vector(event.offsetX, event.offsetY), {
       [MODIFIER.CTRL]: event.ctrlKey,
       [MODIFIER.ALT]: event.altKey,
       [MODIFIER.SHIFT]: event.shiftKey,
