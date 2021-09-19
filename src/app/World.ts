@@ -6,12 +6,13 @@ import { TileConstructionLineRenderer } from "./Renderers/TileConstructionLineRe
 import { EntityRenderer } from "./Renderers/EntityRenderer";
 import LayerCompositor from "./Renderers/LayerCompositor";
 import TileRenderer from "./Renderers/TileRender";
-import TileGrid from "./TileGrid";
+import TileGrid from "./tiles/TileGrid";
 import Camera from "./Camera";
 import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
 import Vector from "./Vector";
-import Tile from "./Tile";
+import Tile from "./tiles/Tile";
 import MouseControl, { BUTTON, MOUSE_EVENTS } from "./Inputs/MouseControl";
+import TileResolver from "./tiles/TileResolver";
 
 export default class World {
   private compositor = new LayerCompositor();
@@ -84,10 +85,15 @@ export default class World {
       },
     });
 
+    const tileResolver = new TileResolver(this.tileGrid);
+
     const mouse = new MouseControl(true);
     mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
       [BUTTON.LEFT]: (coordinates) => {
-        this.camera.position = coordinates;
+        const { x, y } = coordinates.add(this.camera.position);
+
+        const tile = tileResolver.resolve(x, y);
+        console.log(tile);
       },
     });
   }

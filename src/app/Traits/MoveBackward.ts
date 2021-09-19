@@ -22,8 +22,10 @@ export default class MoveBackward extends Move {
 
     const newSpeed = currentSpeed + acceleration;
 
-    if (newSpeed >= this.maxVelocity) {
-      entity.velocity = entity.heading.setLength(this.maxVelocity).negate();
+    const maxVelocity = this.maxVelocity * entity.currentTile.stickiness;
+
+    if (newSpeed >= maxVelocity) {
+      entity.velocity = entity.heading.setLength(maxVelocity).negate();
       return;
     }
 

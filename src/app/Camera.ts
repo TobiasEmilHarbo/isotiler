@@ -5,7 +5,7 @@ import { Quadrilateral } from "./geometry/Quadrilateral";
 import Rectangle from "./geometry/Rectangle";
 import Shape from "./geometry/Shape";
 import { Drawable } from "./library/Drawable";
-import Tile from "./Tile";
+import Tile from "./tiles/Tile";
 import Vector from "./Vector";
 
 export default class Camera implements Drawable {

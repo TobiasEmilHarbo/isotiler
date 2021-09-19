@@ -3,6 +3,7 @@ import { Entities } from "./Entities/Entities";
 const symbolSpriteMap = new Map<string, string>();
 symbolSpriteMap.set(",", "grass-0");
 symbolSpriteMap.set("e", "grass-4");
+symbolSpriteMap.set("f", "field");
 
 export const symbolSpriteMapper = symbolSpriteMap;
 

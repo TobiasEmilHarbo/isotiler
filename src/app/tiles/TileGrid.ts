@@ -1,4 +1,4 @@
-import Tile from "./Tile";
+import Tile, { NullTile } from "./Tile";
 
 export default class TileGrid {
   private tiles = new Array<Tile>();
@@ -39,11 +39,13 @@ export default class TileGrid {
   }
 
   public get(columnIndex: number, rowIndex: number): Tile {
-    if (this.grid.has(columnIndex)) {
-      const column = this.grid.get(columnIndex);
-      return column.get(rowIndex);
-    }
-    return null;
+    if (!this.grid.has(columnIndex)) return new NullTile();
+
+    const column = this.grid.get(columnIndex);
+
+    if (!column.has(rowIndex)) return new NullTile();
+
+    return column.get(rowIndex);
   }
 
   public has(columnIndex: number, rowIndex: number): boolean {

@@ -13,10 +13,15 @@ import Break from "../Traits/Break";
 import Velocity from "../Traits/Velocity";
 import Circle from "../geometry/Circle";
 import RigidBody from "../Traits/RigidBody";
+import TileGrid from "../tiles/TileGrid";
 
 export default class GarbageTruck extends Entity {
-  constructor(spriteSheet: SpriteSheet, entities: Array<Entity>) {
-    super(spriteSheet, entities);
+  constructor(
+    spriteSheet: SpriteSheet,
+    tileGrid: TileGrid,
+    entities: Array<Entity>
+  ) {
+    super(spriteSheet, tileGrid, entities);
 
     spriteSheet.define("N", 90, 8, 19, 27, new Vector(10, 16));
     spriteSheet.define("NW", 42, 5, 35, 30, new Vector(17, 19));

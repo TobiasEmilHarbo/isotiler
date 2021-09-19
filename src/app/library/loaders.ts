@@ -14,8 +14,9 @@ import { EntityImport } from "../sprites/EntityImport";
 import { EntitySpriteSheetObservables } from "../sprites/EntitySpriteSheetObservables";
 import { EntitySpriteSheets } from "../sprites/EntitySpriteSheets";
 import SpriteSheet from "../sprites/SpriteSheet";
-import Tile from "../Tile";
-import TileGrid from "../TileGrid";
+import Tile from "../tiles/Tile";
+import TileFactory from "../tiles/TileFactory";
+import TileGrid from "../tiles/TileGrid";
 import World from "../World";
 import { WorldDetail } from "../world/WorldDetail";
 import { WorldDetails } from "../world/WorldDetails";
@@ -78,7 +79,9 @@ export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
       sprites.define("grass-0", 0, 0);
       sprites.define("grass-1", 128, 0);
       sprites.define("grass-4", 128 * 4, 0);
+      sprites.define("field", 0, 64 * 6);
 
+      const tileFactory = new TileFactory();
       const grid = new TileGrid();
 
       const longestRow = parseInt(
@@ -89,22 +92,23 @@ export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
 
       const mapScreenWidth = Tile.WIDTH * longestRow;
 
-      for (let x = 0; x < world.tiles.length; x++) {
-        const row = world.tiles[x];
+      for (let y = 0; y < world.tiles.length; y++) {
+        const row = world.tiles[y];
         if (!row) continue;
-        for (let y = 0; y < row.length; y++) {
-          const symbol = row.charAt(y);
+        for (let x = 0; x < row.length; x++) {
+          const symbol = row.charAt(x);
           if (!symbol) continue;
 
           const spriteName = symbolSpriteMapper.get(symbol);
           const sprite = sprites.get(`${spriteName}`);
 
           const sX =
-            mapScreenWidth / 2 + (y - x) * (Tile.WIDTH / 2) - Tile.WIDTH * 2.5;
+            mapScreenWidth / 2 + (x - y) * (Tile.WIDTH / 2) - Tile.WIDTH * 2.5;
 
-          const sY = (y + x) * (Tile.HEIGHT / 2);
+          const sY = (x + y) * (Tile.HEIGHT / 2);
 
-          const tile = new Tile(x, y, sX, sY, sprite);
+          const tile = tileFactory.getTile(spriteName, x, y, sX, sY, sprite);
+          // const tile = new Tile(x, y, sX, sY, sprite);
           grid.add(tile);
         }
       }
@@ -120,18 +124,23 @@ export const worldLoader = (name: string): Observable<World> => {
   ]).pipe(
     switchMap(([worlds, entitySpriteSheets]) => {
       const entities = new Array<Entity>();
-      const entityFactory = new EntityFactory(entitySpriteSheets, entities);
       const world = worlds[name];
 
       return tileGridLoader(world).pipe(
         map((grid: TileGrid) => {
-          for (let x = 0; x < world.tiles.length; x++) {
-            const row = world.entities[x];
+          const entityFactory = new EntityFactory(
+            entitySpriteSheets,
+            grid,
+            entities
+          );
+
+          for (let y = 0; y < world.tiles.length; y++) {
+            const row = world.entities[y];
 
             if (!row) continue;
 
-            for (let y = 0; y < row.length; y++) {
-              const symbol = row.charAt(y);
+            for (let x = 0; x < row.length; x++) {
+              const symbol = row.charAt(x);
               if (!symbol) continue;
 
               const entityName = symbolEntityMapper.get(symbol);

@@ -1,6 +1,6 @@
 import LayerRenderer from "./LayerRenderer";
-import TileGrid from "../TileGrid";
-import Tile from "../Tile";
+import TileGrid from "../tiles/TileGrid";
+import Tile from "../tiles/Tile";
 import Camera from "../Camera";
 import Buffer from "../Buffer";
 

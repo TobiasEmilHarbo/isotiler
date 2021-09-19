@@ -5,22 +5,27 @@ import SpriteSheet from "../sprites/SpriteSheet";
 import Trait from "../Traits/Trait";
 import Shape from "../geometry/Shape";
 import Circle from "../geometry/Circle";
+import TileGrid from "../tiles/TileGrid";
+import Tile from "../tiles/Tile";
+import TileResolver from "../tiles/TileResolver";
 
 export default abstract class Entity implements Drawable {
   private _position = new Vector();
   private _velocity = new Vector();
   private _heading = Vector.NORTH;
   private _sprite: Sprite = Sprite.EMPTY;
-
-  protected _hitBox: Shape;
-
+  private _currentTile: Tile;
   private traits = new Array<Trait>();
+  protected _hitBox: Shape;
+  private tileResolver: TileResolver;
 
   constructor(
     protected spriteSheet: SpriteSheet,
+    protected tileGrid: TileGrid,
     protected entities: Array<Entity>
   ) {
     this._hitBox = new Circle(this.position, 0);
+    this.tileResolver = new TileResolver(this.tileGrid);
   }
 
   public set position(position: Vector) {
@@ -60,6 +65,10 @@ export default abstract class Entity implements Drawable {
     return this._hitBox;
   }
 
+  public get currentTile(): Tile {
+    return this._currentTile;
+  }
+
   public setSprite(spriteName: string) {
     const newSprite = this.spriteSheet.get(spriteName);
     if (!newSprite) return;
@@ -83,6 +92,11 @@ export default abstract class Entity implements Drawable {
   }
 
   public update(deltaTime: number): void {
+    this._currentTile = this.tileResolver.resolve(
+      this.position.x,
+      this.position.y
+    );
+
     for (let index = this.traits.length - 1; index >= 0; index--) {
       const trait = this.traits[index];
       trait.update(this, deltaTime);

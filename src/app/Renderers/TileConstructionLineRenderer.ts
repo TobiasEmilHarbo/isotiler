@@ -1,7 +1,7 @@
 import Buffer from "../Buffer";
 import Camera from "../Camera";
-import Tile from "../Tile";
-import TileGrid from "../TileGrid";
+import Tile from "../tiles/Tile";
+import TileGrid from "../tiles/TileGrid";
 import LayerRenderer from "./LayerRenderer";
 
 export class TileConstructionLineRenderer implements LayerRenderer {
