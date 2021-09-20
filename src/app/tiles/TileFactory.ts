@@ -9,15 +9,11 @@ export default class TileFactory {
   private tileConfiguration = new Map<string, TileConfiguration>();
 
   constructor() {
-    this.tileConfiguration.set("grass-0", {
+    this.tileConfiguration.set("grass", {
       stickiness: 0.75,
     });
 
-    this.tileConfiguration.set("grass-4", {
-      stickiness: 1.25,
-    });
-
-    this.tileConfiguration.set("field", {
+    this.tileConfiguration.set("dry-grass", {
       stickiness: 1.25,
     });
   }

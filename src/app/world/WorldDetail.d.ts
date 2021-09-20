@@ -1,7 +1,14 @@
 export type WorldDetail = {
-  rows: number;
-  columns: number;
-  spriteName: string;
+  spriteSheet: {
+    name: string;
+    types: Array<{
+      name: string;
+      sprites: Array<{
+        x: number;
+        y: number;
+      }>;
+    }>;
+  };
   tiles: Array<string>;
   entities: Array<string>;
 };

@@ -72,14 +72,15 @@ export const entitySpriteSheetFactoryLoader =
   };
 
 export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
-  return spriteSheetLoader(`./resources/${world.spriteName}.png`).pipe(
+  return spriteSheetLoader(`./resources/${world.spriteSheet.name}.png`).pipe(
     map((sprites: SpriteSheet) => {
       sprites.setDefaultSpriteSize(128, 64);
 
-      sprites.define("grass-0", 0, 0);
-      sprites.define("grass-1", 128, 0);
-      sprites.define("grass-4", 128 * 4, 0);
-      sprites.define("field", 0, 64 * 6);
+      world.spriteSheet.types.forEach((type) => {
+        type.sprites.forEach(({ x, y }) => {
+          sprites.defineInGroup(type.name, x, y);
+        });
+      });
 
       const tileFactory = new TileFactory();
       const grid = new TileGrid();
@@ -108,7 +109,6 @@ export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
           const sY = (x + y) * (Tile.HEIGHT / 2);
 
           const tile = tileFactory.getTile(spriteName, x, y, sX, sY, sprite);
-          // const tile = new Tile(x, y, sX, sY, sprite);
           grid.add(tile);
         }
       }

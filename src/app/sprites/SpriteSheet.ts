@@ -3,6 +3,8 @@ import Sprite from "./Sprite";
 
 export default class SpriteSheet {
   private sprites = new Map<string, Sprite>();
+  private groups = new Map<string, Array<string>>();
+
   constructor(
     private image: HTMLImageElement,
     private defaultSpriteWidth?: number,
@@ -44,7 +46,33 @@ export default class SpriteSheet {
     this.sprites.set(name, sprite);
   }
 
+  public defineInGroup(name: string, x: number, y: number) {
+    let group = this.groups.get(name);
+    if (!group) {
+      group = new Array<string>();
+      this.groups.set(name, group);
+    }
+
+    const spriteName = `${name}-${group.length}`;
+    this.define(spriteName, x, y);
+
+    group.push(spriteName);
+  }
+
+  public getRandomFromGroup(group: Array<string>): Sprite {
+    const groupSize = group?.length;
+
+    const index = Math.floor(Math.random() * (groupSize - 0));
+
+    const sprite = this.sprites.get(group[index]);
+    return sprite ? sprite : Sprite.EMPTY;
+  }
+
   public get(name: string): Sprite {
-    return this.sprites.get(name);
+    const group = this.groups.get(name);
+    if (!!group) return this.getRandomFromGroup(group);
+
+    const sprite = this.sprites.get(name);
+    return sprite ? sprite : Sprite.EMPTY;
   }
 }
