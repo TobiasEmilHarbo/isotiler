@@ -1,7 +1,8 @@
 import Sprite from "../sprites/Sprite";
-import Tile from "./Tile";
+import Tile, { NullTile } from "./Tile";
 
-interface TileConfiguration {
+export interface TileConfiguration {
+  type: string;
   stickiness: number;
 }
 
@@ -10,13 +11,21 @@ export default class TileFactory {
 
   constructor() {
     this.tileConfiguration.set("grass", {
+      type: "grass",
       stickiness: 0.75,
     });
 
     this.tileConfiguration.set("dry-grass", {
+      type: "dry-grass",
+      stickiness: 1.25,
+    });
+
+    this.tileConfiguration.set("road", {
+      type: "road",
       stickiness: 1.25,
     });
   }
+
   public getTile(
     tileType: string,
     column: number,
@@ -25,7 +34,8 @@ export default class TileFactory {
     y: number,
     sprite: Sprite
   ): Tile {
-    const { stickiness } = this.tileConfiguration.get(tileType);
-    return new Tile(column, row, x, y, sprite, stickiness);
+    let configuration = this.tileConfiguration.get(tileType);
+
+    return new Tile(column, row, x, y, sprite, configuration);
   }
 }

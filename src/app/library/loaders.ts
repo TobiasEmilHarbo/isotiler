@@ -1,15 +1,21 @@
 import {
   combineLatest,
+  first,
   forkJoin,
   map,
   Observable,
+  of,
+  pipe,
   Subscriber,
   switchMap,
+  tap,
+  withLatestFrom,
 } from "rxjs";
 import { Entities } from "../Entities/Entities";
 import Entity from "../Entities/Entity";
 import { EntityFactory } from "../Entities/EntityFactory";
 import { symbolEntityMapper, symbolSpriteMapper } from "../Mappers";
+import { RoadProcessor } from "../mapPreprocessor/RoadProcessor";
 import { EntityImport } from "../sprites/EntityImport";
 import { EntitySpriteSheetObservables } from "../sprites/EntitySpriteSheetObservables";
 import { EntitySpriteSheets } from "../sprites/EntitySpriteSheets";
@@ -82,6 +88,8 @@ export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
         });
       });
 
+      sprites.define("road", 896, 128);
+
       const tileFactory = new TileFactory();
       const grid = new TileGrid();
 
@@ -113,6 +121,17 @@ export const tileGridLoader = (world: WorldDetail): Observable<TileGrid> => {
         }
       }
       return grid;
+    }),
+    switchMap((grid) => {
+      return combineLatest({
+        grid: of(grid),
+        spriteSheet: spriteSheetLoader(`./resources/road-tiles.png`),
+      }).pipe(
+        map(({ grid, spriteSheet }) => {
+          const processor = new RoadProcessor(spriteSheet);
+          return processor.process(grid);
+        })
+      );
     })
   );
 };
@@ -127,7 +146,7 @@ export const worldLoader = (name: string): Observable<World> => {
       const world = worlds[name];
 
       return tileGridLoader(world).pipe(
-        map((grid: TileGrid) => {
+        map((grid) => {
           const entityFactory = new EntityFactory(
             entitySpriteSheets,
             grid,

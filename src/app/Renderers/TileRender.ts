@@ -7,13 +7,13 @@ import Buffer from "../Buffer";
 export default class TileRenderer implements LayerRenderer {
   private buffer: Buffer;
 
-  constructor(private camera: Camera, private grid: TileGrid) {
+  constructor(private camera: Camera, grid: TileGrid) {
     this.buffer = new Buffer(
-      Tile.WIDTH * this.grid.rows - Tile.WIDTH / 2,
-      Tile.HEIGHT * this.grid.rows
+      Tile.WIDTH * grid.columns - Tile.WIDTH / 2,
+      Tile.HEIGHT * grid.columns
     );
 
-    this.grid.forEach((tile) => {
+    grid.forEach((tile) => {
       if (!tile) return;
       this.buffer.draw(tile);
     });

@@ -93,7 +93,7 @@ export default class World {
         const { x, y } = coordinates.add(this.camera.position);
 
         const tile = tileResolver.resolve(x, y);
-        console.log(tile);
+        console.log(tileResolver.getAdjacentTiles(tile));
       },
     });
   }

@@ -9,8 +9,8 @@ export class TileConstructionLineRenderer implements LayerRenderer {
 
   constructor(private camera: Camera, tiles: TileGrid) {
     this.buffer = new Buffer(
-      Tile.WIDTH * tiles.rows - Tile.WIDTH / 2,
-      tiles.rows * Tile.HEIGHT
+      Tile.WIDTH * tiles.columns - Tile.WIDTH * 2,
+      Tile.HEIGHT * tiles.columns
     );
 
     tiles.forEach((tile) => {
@@ -34,7 +34,7 @@ export class TileConstructionLineRenderer implements LayerRenderer {
 
   public draw(context: CanvasRenderingContext2D): void {
     context.save();
-    // context.clip(this.camera.screen);
+    context.clip(this.camera.screen);
 
     const { x, y } = this.camera.position.negate();
 
