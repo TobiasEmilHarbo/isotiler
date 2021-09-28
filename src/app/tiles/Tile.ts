@@ -33,6 +33,10 @@ export default class Tile implements Drawable {
     this._type = type;
   }
 
+  public get id(): string {
+    return "" + this.column + this.row;
+  }
+
   public get column(): number {
     return this._column;
   }

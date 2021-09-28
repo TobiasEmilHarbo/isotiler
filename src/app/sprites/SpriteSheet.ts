@@ -62,7 +62,7 @@ export default class SpriteSheet {
   public getRandomFromGroup(group: Array<string>): Sprite {
     const groupSize = group?.length;
 
-    const index = Math.floor(Math.random() * (groupSize - 0));
+    const index = Math.floor(Math.random() * groupSize);
 
     const sprite = this.sprites.get(group[index]);
     return sprite ? sprite : Sprite.EMPTY;

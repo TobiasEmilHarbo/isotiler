@@ -5,6 +5,6 @@
     "module": "esnext",
     "noImplicitAny": true,
     "target": "es2015",
-    "lib": ["ES2017","DOM"]
+    "lib": ["ES2017","DOM", "es2019"]
   }
 }

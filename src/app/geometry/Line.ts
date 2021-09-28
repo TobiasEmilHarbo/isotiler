@@ -18,6 +18,10 @@ export default class Line implements Drawable {
     return (this.A.y - this.B.y) / xDifference;
   }
 
+  public get midPoint(): Vector {
+    return new Vector((this.A.x + this.B.x) / 2, (this.A.y + this.B.y) / 2);
+  }
+
   private isParallelTo(other: Line): boolean {
     return this.getSlope().equals(other.getSlope());
   }

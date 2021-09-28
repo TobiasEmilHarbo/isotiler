@@ -18,7 +18,14 @@ export class RoadProcessor implements MapPreprocessor {
     spriteSheet.define("t-cross-3", 0, 128);
     spriteSheet.define("t-cross-4", 128, 128);
     spriteSheet.define("cross", 256, 128);
+    spriteSheet.define("turn-3", 384, 0);
+    spriteSheet.define("turn-4", 384, 64);
+    spriteSheet.define("dead-end-1", 384, 128);
+    spriteSheet.define("dead-end-2", 512, 0);
+    spriteSheet.define("dead-end-3", 512, 64);
+    spriteSheet.define("dead-end-4", 512, 128);
   }
+
   public process(grid: TileGrid): TileGrid {
     const resolver = new TileResolver(grid);
 
@@ -36,33 +43,33 @@ export class RoadProcessor implements MapPreprocessor {
           .reduce((prev: string, curr: string): string => prev + curr);
 
         switch (adjacentTileSequence) {
-          // case "0001":
-          //   tile.sprite = this.spriteSheet.get("straight-1");
-          //   break;
-          // case "0010":
-          //   tile.sprite = this.spriteSheet.get("straight-2");
-          //   break;
+          case "0001":
+            tile.sprite = this.spriteSheet.get("dead-end-3");
+            break;
+          case "0010":
+            tile.sprite = this.spriteSheet.get("dead-end-2");
+            break;
           case "0011":
             tile.sprite = this.spriteSheet.get("turn-2");
             break;
-          // case "0100":
-          //   tile.sprite = this.spriteSheet.get("straight-1");
-          //   break;
+          case "0100":
+            tile.sprite = this.spriteSheet.get("dead-end-1");
+            break;
           case "0101":
             tile.sprite = this.spriteSheet.get("straight-1");
             break;
-          // case "0110":
-          //   tile.sprite = this.spriteSheet.get("t-cross-3");
-          //   break;
+          case "0110":
+            tile.sprite = this.spriteSheet.get("turn-4");
+            break;
           case "0111":
             tile.sprite = this.spriteSheet.get("t-cross-3");
             break;
           case "1000":
-            tile.sprite = this.spriteSheet.get("straight-2");
+            tile.sprite = this.spriteSheet.get("dead-end-4");
             break;
-          // case "1001":
-          //   tile.sprite = this.spriteSheet.get("t-cross-2");
-          //   break;
+          case "1001":
+            tile.sprite = this.spriteSheet.get("turn-3");
+            break;
           case "1010":
             tile.sprite = this.spriteSheet.get("straight-2");
             break;
@@ -75,9 +82,9 @@ export class RoadProcessor implements MapPreprocessor {
           case "1101":
             tile.sprite = this.spriteSheet.get("t-cross-1");
             break;
-          // case "1110":
-          //   tile.sprite = this.spriteSheet.get("t-cross-1");
-          //   break;
+          case "1110":
+            tile.sprite = this.spriteSheet.get("t-cross-4");
+            break;
           case "1111":
             tile.sprite = this.spriteSheet.get("cross");
             break;

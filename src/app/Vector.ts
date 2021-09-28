@@ -135,9 +135,13 @@ export default class Vector implements Drawable {
     );
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
+  public draw(
+    context: CanvasRenderingContext2D,
+    offsetX?: number,
+    offsetY?: number
+  ): void {
     context.beginPath();
-    context.arc(this.x, this.y, 1, 0, 2 * Math.PI);
+    context.arc(this.x + offsetX, this.y + offsetY, 1, 0, 2 * Math.PI);
     context.stroke();
   }
 }

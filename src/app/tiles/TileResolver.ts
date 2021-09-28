@@ -18,7 +18,11 @@ export default class TileResolver {
     return this.tiles.get(Math.floor(column), Math.floor(row));
   }
 
-  public getAdjacentTiles(tile: Tile, includeCorners: boolean = false) {
+  public getAdjacentTiles(
+    tile: Tile,
+    type?: string,
+    includeCorners: boolean = false
+  ) {
     let offsets = [
       { column: 0, row: -1 },
       { column: 1, row: 0 },
@@ -39,8 +43,14 @@ export default class TileResolver {
       ];
     }
 
-    return offsets.map((offset) =>
+    const adjacentRoadTile = offsets.map((offset) =>
       this.tiles.get(tile.column + offset.column, tile.row + offset.row)
     );
+
+    if (!type) {
+      return adjacentRoadTile;
+    }
+
+    return adjacentRoadTile.filter((tile) => tile.type == type);
   }
 }

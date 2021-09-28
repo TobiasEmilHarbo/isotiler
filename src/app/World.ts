@@ -11,8 +11,8 @@ import Camera from "./Camera";
 import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
 import Vector from "./Vector";
 import Tile from "./tiles/Tile";
-import MouseControl, { BUTTON, MOUSE_EVENTS } from "./Inputs/MouseControl";
-import TileResolver from "./tiles/TileResolver";
+import { RoadGraph } from "./graph/RoadGraph";
+import RoadGraphRenderer from "./Renderers/RoadGraphRenderer";
 
 export default class World {
   private compositor = new LayerCompositor();
@@ -49,9 +49,14 @@ export default class World {
       this.entities
     );
 
+    const roadGraph = new RoadGraph(this.tileGrid);
+
+    const roadGraphRenderer = new RoadGraphRenderer(this._camera, roadGraph);
+
     this.compositor.addLayer(tileRenderer);
-    // this.compositor.addLayer(tileLineRenderer);
+    this.compositor.addLayer(tileLineRenderer);
     this.compositor.addLayer(entityRenderer);
+    this.compositor.addLayer(roadGraphRenderer);
     // this.compositor.addLayer(lineRenderer);
 
     const keyboard = new KeyboardControl(true);
@@ -85,17 +90,17 @@ export default class World {
       },
     });
 
-    const tileResolver = new TileResolver(this.tileGrid);
+    // const tileResolver = new TileResolver(this.tileGrid);
 
-    const mouse = new MouseControl(true);
-    mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
-      [BUTTON.LEFT]: (coordinates) => {
-        const { x, y } = coordinates.add(this.camera.position);
+    // const mouse = new MouseControl(true);
+    // mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
+    //   [BUTTON.LEFT]: (coordinates) => {
+    //     const { x, y } = coordinates.add(this.camera.position);
 
-        const tile = tileResolver.resolve(x, y);
-        console.log(tileResolver.getAdjacentTiles(tile));
-      },
-    });
+    //     const tile = tileResolver.resolve(x, y);
+    //     console.log(tileResolver.getAdjacentTiles(tile));
+    //   },
+    // });
   }
 
   public get camera(): Camera {
