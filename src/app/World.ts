@@ -1,8 +1,8 @@
 import { Entities } from "./Entities/Entities";
 import Entity from "./Entities/Entity";
 import { EntityFactory } from "./Entities/EntityFactory";
-import { ConstructionLineRenderer } from "./Renderers/ConstructionLineRenderer";
-import { TileConstructionLineRenderer } from "./Renderers/TileConstructionLineRenderer";
+import { EntityLineRenderer } from "./Renderers/EntityLineRenderer";
+import { TileLineRenderer } from "./Renderers/TileLineRenderer";
 import { EntityRenderer } from "./Renderers/EntityRenderer";
 import LayerCompositor from "./Renderers/LayerCompositor";
 import TileRenderer from "./Renderers/TileRender";
@@ -17,7 +17,6 @@ import RoadGraphRenderer from "./Renderers/RoadGraphRenderer";
 export default class World {
   private compositor = new LayerCompositor();
   private _camera = new Camera();
-  private garbageTruck: Entity;
 
   constructor(
     private tileGrid: TileGrid,
@@ -29,22 +28,22 @@ export default class World {
       Tile.HEIGHT * 0.5
     );
 
-    this.garbageTruck = this.entityFactory.getEntity(Entities.GARBAGE_TRUCK);
+    const garbageTruck = this.entityFactory.getEntity(Entities.GARBAGE_TRUCK);
+    const redSedan = this.entityFactory.getEntity(Entities.RED_SEDAN);
 
-    this.garbageTruck.position = this.tileGrid.get(10, 10).center;
+    redSedan.position = this.tileGrid.get(11, 10).center;
+    garbageTruck.position = this.tileGrid.get(10, 10).center;
 
-    this.entities.push(this.garbageTruck);
+    this.entities.push(redSedan);
+    this.entities.push(garbageTruck);
 
-    this.camera.setEntityInFocus(this.garbageTruck);
+    this.camera.setEntityInFocus(garbageTruck);
 
     const tileRenderer = new TileRenderer(this._camera, this.tileGrid);
-    const tileLineRenderer = new TileConstructionLineRenderer(
-      this._camera,
-      this.tileGrid
-    );
+    const tileLineRenderer = new TileLineRenderer(this._camera, this.tileGrid);
 
     const entityRenderer = new EntityRenderer(this._camera, this.entities);
-    const lineRenderer = new ConstructionLineRenderer(
+    const entityLineRenderer = new EntityLineRenderer(
       this._camera,
       this.entities
     );
@@ -54,10 +53,11 @@ export default class World {
     const roadGraphRenderer = new RoadGraphRenderer(this._camera, roadGraph);
 
     this.compositor.addLayer(tileRenderer);
-    this.compositor.addLayer(tileLineRenderer);
     this.compositor.addLayer(entityRenderer);
+
+    this.compositor.addLayer(tileLineRenderer);
     this.compositor.addLayer(roadGraphRenderer);
-    // this.compositor.addLayer(lineRenderer);
+    this.compositor.addLayer(entityLineRenderer);
 
     const keyboard = new KeyboardControl(true);
 

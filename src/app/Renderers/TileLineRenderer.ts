@@ -4,7 +4,7 @@ import Tile from "../tiles/Tile";
 import TileGrid from "../tiles/TileGrid";
 import LayerRenderer from "./LayerRenderer";
 
-export class TileConstructionLineRenderer implements LayerRenderer {
+export class TileLineRenderer implements LayerRenderer {
   private buffer: Buffer;
 
   constructor(private camera: Camera, tiles: TileGrid) {

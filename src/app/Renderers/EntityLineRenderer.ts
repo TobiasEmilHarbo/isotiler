@@ -2,7 +2,7 @@ import Camera from "../Camera";
 import Entity from "../Entities/Entity";
 import LayerRenderer from "./LayerRenderer";
 
-export class ConstructionLineRenderer implements LayerRenderer {
+export class EntityLineRenderer implements LayerRenderer {
   constructor(private camera: Camera, private entities: Array<Entity>) {}
 
   public update(deltaTime: number) {}
