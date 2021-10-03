@@ -1,18 +1,19 @@
-import { Entities } from "./Entities/Entities";
-import Entity from "./Entities/Entity";
-import { EntityFactory } from "./Entities/EntityFactory";
+import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
 import { EntityLineRenderer } from "./Renderers/EntityLineRenderer";
+import { CameraLineRenderer } from "./Renderers/CameraLineRenderer";
 import { TileLineRenderer } from "./Renderers/TileLineRenderer";
+import RoadGraphRenderer from "./Renderers/RoadGraphRenderer";
 import { EntityRenderer } from "./Renderers/EntityRenderer";
 import LayerCompositor from "./Renderers/LayerCompositor";
+import { EntityFactory } from "./Entities/EntityFactory";
 import TileRenderer from "./Renderers/TileRender";
-import TileGrid from "./tiles/TileGrid";
-import Camera from "./Camera";
-import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
-import Vector from "./Vector";
-import Tile from "./tiles/Tile";
+import { Entities } from "./Entities/Entities";
 import { RoadGraph } from "./graph/RoadGraph";
-import RoadGraphRenderer from "./Renderers/RoadGraphRenderer";
+import TileGrid from "./tiles/TileGrid";
+import Entity from "./Entities/Entity";
+import Tile from "./tiles/Tile";
+import Camera from "./Camera";
+import Vector from "./Vector";
 
 export default class World {
   private compositor = new LayerCompositor();
@@ -52,12 +53,15 @@ export default class World {
 
     const roadGraphRenderer = new RoadGraphRenderer(this._camera, roadGraph);
 
+    const cameraLineRenderer = new CameraLineRenderer(this._camera);
+
     this.compositor.addLayer(tileRenderer);
     this.compositor.addLayer(entityRenderer);
 
     this.compositor.addLayer(tileLineRenderer);
     this.compositor.addLayer(roadGraphRenderer);
     this.compositor.addLayer(entityLineRenderer);
+    this.compositor.addLayer(cameraLineRenderer);
 
     const keyboard = new KeyboardControl(true);
 
@@ -109,7 +113,6 @@ export default class World {
 
   public draw(context: CanvasRenderingContext2D) {
     this.compositor.draw(context);
-    // this.camera.draw(context);
   }
 
   public update(deltaTime: number) {
