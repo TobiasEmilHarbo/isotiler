@@ -1,7 +1,7 @@
 import Entity from "../Entities/Entity";
 import Drag from "./Drag";
 
-export default class Break extends Drag {
+export default class Brake extends Drag {
   private activated: boolean;
 
   constructor(breakForce: number) {

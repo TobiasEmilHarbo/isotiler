@@ -14,10 +14,14 @@ import Entity from "./Entities/Entity";
 import Tile from "./tiles/Tile";
 import Camera from "./Camera";
 import Vector from "./Vector";
+import { VehicleController } from "./VehicleController";
+import MouseControl, { BUTTON, MOUSE_EVENTS } from "./Inputs/MouseControl";
 
 export default class World {
   private compositor = new LayerCompositor();
   private _camera = new Camera();
+  private points = Array<Vector>();
+  private entityController: VehicleController;
 
   constructor(
     private tileGrid: TileGrid,
@@ -40,6 +44,9 @@ export default class World {
 
     this.camera.setEntityInFocus(garbageTruck);
 
+    this.entityController = new VehicleController();
+    this.entityController.setEntity(garbageTruck);
+
     const tileRenderer = new TileRenderer(this._camera, this.tileGrid);
     const tileLineRenderer = new TileLineRenderer(this._camera, this.tileGrid);
 
@@ -58,65 +65,39 @@ export default class World {
     this.compositor.addLayer(tileRenderer);
     this.compositor.addLayer(entityRenderer);
 
-    this.compositor.addLayer(tileLineRenderer);
-    this.compositor.addLayer(roadGraphRenderer);
+    // this.compositor.addLayer(tileLineRenderer)
+    // this.compositor.addLayer(roadGraphRenderer);
     this.compositor.addLayer(entityLineRenderer);
-    this.compositor.addLayer(cameraLineRenderer);
+    // this.compositor.addLayer(cameraLineRenderer);
 
-    const keyboard = new KeyboardControl(true);
-
-    keyboard.addKeyMapping(KEYS.ARROW_UP, {
-      [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.subtract(
-          Vector.SOUTH.multiply(10)
-        );
+    const mouse = new MouseControl(true);
+    mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
+      [BUTTON.LEFT]: (coordinates) => {
+        const gameCoordinates = this._camera.toGameCoordinates(coordinates);
+        this.entityController.goTo(gameCoordinates);
+        this.points.push(gameCoordinates);
       },
     });
-    keyboard.addKeyMapping(KEYS.ARROW_DOWN, {
-      [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.subtract(
-          Vector.NORTH.multiply(10)
-        );
-      },
-    });
-    keyboard.addKeyMapping(KEYS.ARROW_LEFT, {
-      [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.subtract(
-          Vector.EAST.multiply(10)
-        );
-      },
-    });
-    keyboard.addKeyMapping(KEYS.ARROW_RIGHT, {
-      [KEY_STATES.PRESSED]: () => {
-        this.camera.position = this.camera.position.subtract(
-          Vector.WEST.multiply(10)
-        );
-      },
-    });
-
-    // const tileResolver = new TileResolver(this.tileGrid);
-
-    // const mouse = new MouseControl(true);
-    // mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
-    //   [BUTTON.LEFT]: (coordinates) => {
-    //     const { x, y } = coordinates.add(this.camera.position);
-
-    //     const tile = tileResolver.resolve(x, y);
-    //     console.log(tileResolver.getAdjacentTiles(tile));
-    //   },
-    // });
   }
 
-  public get camera(): Camera {
+  private get camera(): Camera {
     return this._camera;
   }
 
   public draw(context: CanvasRenderingContext2D) {
     this.compositor.draw(context);
+
+    context.strokeStyle = "red";
+
+    const { x, y } = this._camera.position.negate();
+    this.points.forEach((point) => {
+      point.draw(context, x, y);
+    });
   }
 
   public update(deltaTime: number) {
     this.compositor.update(deltaTime);
     this.camera.update(deltaTime);
+    this.entityController.update(deltaTime);
   }
 }
