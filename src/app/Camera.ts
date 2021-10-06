@@ -4,6 +4,7 @@ import Line from "./geometry/Line";
 import { Quadrilateral } from "./geometry/Quadrilateral";
 import Rectangle from "./geometry/Rectangle";
 import Shape from "./geometry/Shape";
+import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
 import { Drawable } from "./library/Drawable";
 import Tile from "./tiles/Tile";
 import Vector from "./Vector";
@@ -22,6 +23,29 @@ export default class Camera implements Drawable {
       new Vector(Tile.WIDTH * 3.5, Tile.HEIGHT * 7),
       new Vector(0, Tile.HEIGHT * 3.5)
     );
+
+    const keyboard = new KeyboardControl(true);
+
+    keyboard.addKeyMapping(KEYS.ARROW_UP, {
+      [KEY_STATES.PRESSED]: () => {
+        this.position = this.position.subtract(Vector.SOUTH.multiply(10));
+      },
+    });
+    keyboard.addKeyMapping(KEYS.ARROW_DOWN, {
+      [KEY_STATES.PRESSED]: () => {
+        this.position = this.position.subtract(Vector.NORTH.multiply(10));
+      },
+    });
+    keyboard.addKeyMapping(KEYS.ARROW_LEFT, {
+      [KEY_STATES.PRESSED]: () => {
+        this.position = this.position.subtract(Vector.EAST.multiply(10));
+      },
+    });
+    keyboard.addKeyMapping(KEYS.ARROW_RIGHT, {
+      [KEY_STATES.PRESSED]: () => {
+        this.position = this.position.subtract(Vector.WEST.multiply(10));
+      },
+    });
   }
 
   public draw(context: CanvasRenderingContext2D): void {
@@ -37,6 +61,8 @@ export default class Camera implements Drawable {
       this.position.negate()
     );
 
+    entityInFocusInScreenCoordinates.draw(context);
+
     context.strokeStyle = "blue";
 
     const line = new Line(this.focus, entityInFocusInScreenCoordinates);
@@ -51,6 +77,14 @@ export default class Camera implements Drawable {
     entityInFocusInScreenCoordinates.subtract(this.focus).magnitude;
 
     cameraTranslation.draw(context);
+  }
+
+  public toGameCoordinates(screenPoint: Vector): Vector {
+    return screenPoint.subtract(this.position.negate());
+  }
+
+  public toScreenCoordinates(inGamePoint: Vector) {
+    return inGamePoint.add(this.position.negate());
   }
 
   public get screen(): Path2D {
@@ -90,8 +124,8 @@ export default class Camera implements Drawable {
   public setEntityInFocus(entity: Entity) {
     this.entityInFocus = entity;
 
-    const entityInFocusInScreenCoordinates = this.entityInFocus.position.add(
-      this.position.negate()
+    const entityInFocusInScreenCoordinates = this.toScreenCoordinates(
+      this.entityInFocus.position
     );
 
     const cameraTranslation = entityInFocusInScreenCoordinates.subtract(

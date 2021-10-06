@@ -79,6 +79,15 @@ export default abstract class Entity implements Drawable {
     this.traits.push(trait);
   }
 
+  public get speed(): number {
+    return this.velocity.magnitude;
+  }
+
+  public angleToTarget(target: Vector): number {
+    const angle = this.heading.angleBetween(target);
+    return angle > 180 ? 180 - (angle - 180) : angle * -1;
+  }
+
   public draw(
     context: CanvasRenderingContext2D,
     offsetX?: number,
