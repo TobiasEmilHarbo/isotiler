@@ -5,6 +5,13 @@ import { Quadrilateral } from "./geometry/Quadrilateral";
 import Rectangle from "./geometry/Rectangle";
 import Shape from "./geometry/Shape";
 import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
+import MouseControl, {
+  BUTTON,
+  MODIFIER,
+  modifiers,
+  MOUSE_EVENTS,
+  noModifiers,
+} from "./Inputs/MouseControl";
 import { Drawable } from "./library/Drawable";
 import Tile from "./tiles/Tile";
 import Vector from "./Vector";
@@ -28,55 +35,32 @@ export default class Camera implements Drawable {
 
     keyboard.addKeyMapping(KEYS.ARROW_UP, {
       [KEY_STATES.PRESSED]: () => {
-        this.position = this.position.subtract(Vector.SOUTH.multiply(10));
+        this.position = this.position.subtract(Vector.SOUTH.multiply(20));
       },
     });
     keyboard.addKeyMapping(KEYS.ARROW_DOWN, {
       [KEY_STATES.PRESSED]: () => {
-        this.position = this.position.subtract(Vector.NORTH.multiply(10));
+        this.position = this.position.subtract(Vector.NORTH.multiply(20));
       },
     });
     keyboard.addKeyMapping(KEYS.ARROW_LEFT, {
       [KEY_STATES.PRESSED]: () => {
-        this.position = this.position.subtract(Vector.EAST.multiply(10));
+        this.position = this.position.subtract(Vector.EAST.multiply(20));
       },
     });
     keyboard.addKeyMapping(KEYS.ARROW_RIGHT, {
       [KEY_STATES.PRESSED]: () => {
-        this.position = this.position.subtract(Vector.WEST.multiply(10));
+        this.position = this.position.subtract(Vector.WEST.multiply(20));
       },
     });
-  }
 
-  public draw(context: CanvasRenderingContext2D): void {
-    context.strokeStyle = "red";
+    const mouse = new MouseControl(true);
 
-    this._screen.draw(context);
-    this.position.draw(context);
-    this._focus.draw(context);
-
-    if (!this.entityInFocus) return;
-
-    const entityInFocusInScreenCoordinates = this.entityInFocus.position.add(
-      this.position.negate()
-    );
-
-    entityInFocusInScreenCoordinates.draw(context);
-
-    context.strokeStyle = "blue";
-
-    const line = new Line(this.focus, entityInFocusInScreenCoordinates);
-
-    line.draw(context);
-
-    const cameraTranslation = entityInFocusInScreenCoordinates
-      .subtract(this.focus)
-      .setLength(this.focusRadius)
-      .add(this.focus);
-
-    entityInFocusInScreenCoordinates.subtract(this.focus).magnitude;
-
-    cameraTranslation.draw(context);
+    mouse.addEventMapping(MOUSE_EVENTS.RIGHT_CLICK, {
+      [BUTTON.RIGHT]: noModifiers((coordinates) => {
+        this.setFocus(this.toGameCoordinates(coordinates));
+      }),
+    });
   }
 
   public toGameCoordinates(screenPoint: Vector): Vector {
@@ -121,6 +105,12 @@ export default class Camera implements Drawable {
     return false;
   }
 
+  public setFocus(inGameCoordinates: Vector): void {
+    this.position = this.position.subtract(
+      this.focus.subtract(this.toScreenCoordinates(inGameCoordinates))
+    );
+  }
+
   public setEntityInFocus(entity: Entity) {
     this.entityInFocus = entity;
 
@@ -135,27 +125,51 @@ export default class Camera implements Drawable {
     this.position = this.position.add(cameraTranslation);
   }
 
+  public draw(context: CanvasRenderingContext2D): void {
+    context.strokeStyle = "red";
+
+    this._screen.draw(context);
+    this.position.draw(context);
+    this._focus.draw(context);
+
+    if (!this.entityInFocus) return;
+
+    const screenCoordinatesInFocus = this.toScreenCoordinates(
+      this.entityInFocus.position
+    );
+
+    screenCoordinatesInFocus.draw(context);
+
+    context.strokeStyle = "blue";
+
+    const line = new Line(this.focus, screenCoordinatesInFocus);
+
+    line.draw(context);
+
+    const cameraTranslation = screenCoordinatesInFocus
+      .subtract(this.focus)
+      .setLength(this.focusRadius)
+      .add(this.focus);
+
+    cameraTranslation.draw(context);
+  }
+
   public update(deltaTime: number) {
     if (!this.entityInFocus) return;
 
-    const entityInScreenCoordinates = this.entityInFocus.position.add(
-      this.position.negate()
-    );
+    const newFocus = this.toScreenCoordinates(this.entityInFocus.position);
 
-    const distanceToEntityInFocus = this.focus.distanceTo(
-      entityInScreenCoordinates
-    );
+    const distanceToEntityInFocus = this.focus.distanceTo(newFocus);
 
-    if (!distanceToEntityInFocus.lessThan(this.focusRadius)) {
-      const lengthOutOfFocus =
-        entityInScreenCoordinates.subtract(this.focus).magnitude -
-        this.focusRadius;
-
-      const toFocus = entityInScreenCoordinates
-        .subtract(this.focus)
-        .setLength(lengthOutOfFocus);
-
-      this.position = this.position.add(toFocus);
+    if (distanceToEntityInFocus.lessThan(this.focusRadius)) {
+      return;
     }
+
+    const lengthOutOfFocus =
+      newFocus.subtract(this.focus).magnitude - this.focusRadius;
+
+    const toFocus = newFocus.subtract(this.focus).setLength(lengthOutOfFocus);
+
+    this.position = this.position.add(toFocus);
   }
 }
