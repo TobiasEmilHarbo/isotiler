@@ -5,8 +5,12 @@ export class Graph<T> {
   private _nodes = new Map<T, GraphNode<T>>();
   private _edges = new Array<GraphEdge<T>>();
 
-  public hasVertex(value: T): boolean {
-    return this._nodes.has(value);
+  public get nodes(): Map<T, GraphNode<T>> {
+    return this._nodes;
+  }
+
+  public get edges(): Array<GraphEdge<T>> {
+    return this._edges;
   }
 
   public addEdge(source: T, destination: T, weight: number, id: string): void {
@@ -29,15 +33,11 @@ export class Graph<T> {
     return vertex;
   }
 
-  public get nodes(): Map<T, GraphNode<T>> {
-    return this._nodes;
-  }
-
-  public get edges(): Array<GraphEdge<T>> {
-    return this._edges;
-  }
-
   public hasEdge(id: string) {
     return !!this._edges.find((edge) => edge.id == id);
+  }
+
+  public hasVertex(value: T): boolean {
+    return this._nodes.has(value);
   }
 }

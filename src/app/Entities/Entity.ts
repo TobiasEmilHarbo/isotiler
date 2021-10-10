@@ -14,7 +14,6 @@ export default abstract class Entity implements Drawable {
   private _velocity = new Vector();
   private _heading = Vector.NORTH;
   private _sprite: Sprite = Sprite.EMPTY;
-  private _currentTile: Tile;
   private traits = new Array<Trait>();
   protected _hitBox: Shape;
   private tileResolver: TileResolver;
@@ -66,7 +65,7 @@ export default abstract class Entity implements Drawable {
   }
 
   public get currentTile(): Tile {
-    return this._currentTile;
+    return this.tileResolver.resolve(this.position.x, this.position.y);
   }
 
   public setSprite(spriteName: string) {
@@ -101,11 +100,6 @@ export default abstract class Entity implements Drawable {
   }
 
   public update(deltaTime: number): void {
-    this._currentTile = this.tileResolver.resolve(
-      this.position.x,
-      this.position.y
-    );
-
     for (let index = this.traits.length - 1; index >= 0; index--) {
       const trait = this.traits[index];
       trait.update(this, deltaTime);

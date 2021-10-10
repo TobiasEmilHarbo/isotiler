@@ -1,5 +1,4 @@
 import Canvas from "./Canvas";
-import MouseControl, { BUTTON, MOUSE_EVENTS } from "./Inputs/MouseControl";
 import { worldLoader } from "./library/loaders";
 import Timer from "./Timer";
 

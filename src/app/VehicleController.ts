@@ -1,5 +1,6 @@
 import Entity from "./Entities/Entity";
 import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
+import Tile from "./tiles/Tile";
 import Brake from "./Traits/Break";
 import MoveForward from "./Traits/MoveForward";
 import Vector from "./Vector";
@@ -12,11 +13,13 @@ export class VehicleController {
   private journey = new Array<Vector>();
   private activated = false;
 
+  private lastTile: Tile;
+
   private lastDistanceToDestination: number = Infinity;
 
   constructor() {
     this.moveForward = new MoveForward(110, 150);
-    this.brake = new Brake(300);
+    this.brake = new Brake(250);
     this.moveForward.activate();
 
     const keyboard = new KeyboardControl(true);
@@ -35,6 +38,11 @@ export class VehicleController {
   }
 
   public update(deltaTime: number) {
+    if (this.lastTile != this.entity.currentTile) {
+      this.journey = this.entity.currentTile.getPath();
+      this.lastTile = this.entity.currentTile;
+    }
+
     this.brake.deactivate();
     const destination = this.journey[0];
 
@@ -44,13 +52,9 @@ export class VehicleController {
       return;
     }
 
-    console.log("ACTIVE");
-
     this.moveForward.update(this.entity, deltaTime);
 
     const toDestination = destination.subtract(this.entity.position);
-
-    console.log(this.lastDistanceToDestination, toDestination.magnitude);
 
     if (
       this.lastDistanceToDestination <= toDestination.magnitude &&

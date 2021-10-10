@@ -6,6 +6,7 @@ export default class Vector implements Drawable {
   public static readonly SOUTH = new Vector(0, 1);
   public static readonly WEST = new Vector(-1, 0);
   public static readonly EAST = new Vector(1, 0);
+  public static readonly NORTH_WEST = new Vector(-1, -1);
 
   constructor(
     private _x: number = 0,
