@@ -8,13 +8,13 @@ interface Node {
   nodeTile: Tile;
   edgeSequence: Array<string>;
 }
-export class RoadGraph {
+export class RoadGraph extends Graph<Tile> {
   private tileResolver: TileResolver;
-  private graph: Graph<Tile>;
 
   constructor(private tiles: TileGrid) {
+    super();
+
     this.tileResolver = new TileResolver(tiles);
-    this.graph = new Graph<Tile>();
 
     this.tiles.asArray().forEach((tile) => {
       if (tile.type != "road") {
@@ -47,12 +47,12 @@ export class RoadGraph {
       .sort()
       .reduce((sequence: string, id: string) => sequence + id, "");
 
-    if (this.graph.hasEdge(edgeId)) {
+    if (this.hasEdge(edgeId)) {
       return;
     }
 
     if (previousTile !== nodeTile) {
-      this.graph.addEdge(previousTile, nodeTile, weight, edgeId);
+      this.addEdge(previousTile, nodeTile, weight, edgeId);
     }
 
     roadConnections.forEach((connection: Tile) => {
@@ -87,9 +87,5 @@ export class RoadGraph {
       nodeTile: current,
       edgeSequence,
     };
-  }
-
-  public get edges(): Array<GraphEdge<Tile>> {
-    return this.graph.edges;
   }
 }

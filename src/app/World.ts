@@ -15,7 +15,12 @@ import Tile from "./tiles/Tile";
 import Camera from "./Camera";
 import Vector from "./Vector";
 import { VehicleController } from "./VehicleController";
-import MouseControl, { BUTTON, MOUSE_EVENTS } from "./Inputs/MouseControl";
+import MouseControl, {
+  BUTTON,
+  modifiers,
+  MOUSE_EVENTS,
+  noModifiers,
+} from "./Inputs/MouseControl";
 
 export default class World {
   private compositor = new LayerCompositor();
@@ -36,16 +41,17 @@ export default class World {
     const garbageTruck = this.entityFactory.getEntity(Entities.GARBAGE_TRUCK);
     const redSedan = this.entityFactory.getEntity(Entities.RED_SEDAN);
 
-    redSedan.position = this.tileGrid.get(11, 10).center;
-    garbageTruck.position = this.tileGrid.get(10, 10).center;
+    garbageTruck.position = this.tileGrid.get(8, 10).center;
+    redSedan.position = this.tileGrid.get(9, 10).center;
 
     this.entities.push(redSedan);
     this.entities.push(garbageTruck);
 
-    this.camera.setEntityInFocus(garbageTruck);
+    // this.camera.setEntityInFocus(garbageTruck);
+    this.camera.setFocus(garbageTruck.position);
 
-    this.entityController = new VehicleController();
-    this.entityController.setEntity(garbageTruck);
+    // this.entityController = new VehicleController();
+    // this.entityController.setEntity(garbageTruck);
 
     const tileRenderer = new TileRenderer(this._camera, this.tileGrid);
     const tileLineRenderer = new TileLineRenderer(this._camera, this.tileGrid);
@@ -65,19 +71,19 @@ export default class World {
     this.compositor.addLayer(tileRenderer);
     this.compositor.addLayer(entityRenderer);
 
-    // this.compositor.addLayer(tileLineRenderer)
+    this.compositor.addLayer(tileLineRenderer);
     // this.compositor.addLayer(roadGraphRenderer);
     this.compositor.addLayer(entityLineRenderer);
     // this.compositor.addLayer(cameraLineRenderer);
 
-    const mouse = new MouseControl(true);
-    mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
-      [BUTTON.LEFT]: (coordinates) => {
-        const gameCoordinates = this._camera.toGameCoordinates(coordinates);
-        this.entityController.goTo(gameCoordinates);
-        this.points.push(gameCoordinates);
-      },
-    });
+    // const mouse = new MouseControl(true);
+    // mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
+    //   [BUTTON.LEFT]: noModifiers((coordinates) => {
+    //     const gameCoordinates = this._camera.toGameCoordinates(coordinates);
+    //     this.entityController.goTo(gameCoordinates);
+    //     this.points.push(gameCoordinates);
+    //   }),
+    // });
   }
 
   private get camera(): Camera {
@@ -86,9 +92,7 @@ export default class World {
 
   public draw(context: CanvasRenderingContext2D) {
     this.compositor.draw(context);
-
     context.strokeStyle = "red";
-
     const { x, y } = this._camera.position.negate();
     this.points.forEach((point) => {
       point.draw(context, x, y);
@@ -98,6 +102,6 @@ export default class World {
   public update(deltaTime: number) {
     this.compositor.update(deltaTime);
     this.camera.update(deltaTime);
-    this.entityController.update(deltaTime);
+    // this.entityController.update(deltaTime);
   }
 }

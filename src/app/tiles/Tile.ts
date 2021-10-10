@@ -14,12 +14,14 @@ export default class Tile implements Drawable {
   private _stickiness: number = 1;
   private _type: string;
 
+  private path: Array<Vector> = [];
+
   constructor(
     private _column: number,
     private _row: number,
     private x: number,
     private y: number,
-    private _sprite: Sprite,
+    protected _sprite: Sprite,
     { stickiness, type }: TileConfiguration
   ) {
     this._perimeter = new Quadrilateral(
@@ -31,6 +33,14 @@ export default class Tile implements Drawable {
 
     this._stickiness = stickiness ? stickiness : this._stickiness;
     this._type = type;
+  }
+
+  public setPath(path: Array<Vector>) {
+    this.path = path;
+  }
+
+  public getPath(): Array<Vector> {
+    return this.path;
   }
 
   public get id(): string {
@@ -53,11 +63,7 @@ export default class Tile implements Drawable {
     return this._sprite.height;
   }
 
-  public set sprite(sprite: Sprite) {
-    this._sprite = sprite;
-  }
-
-  public get perimeter(): Shape {
+  public get perimeter(): Quadrilateral {
     return this._perimeter;
   }
 

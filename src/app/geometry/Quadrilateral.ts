@@ -23,19 +23,19 @@ export class Quadrilateral extends Shape {
     return path;
   }
 
-  private get A(): Vector {
+  public get A(): Vector {
     return this._A.add(this.position);
   }
 
-  private get B(): Vector {
+  public get B(): Vector {
     return this._B.add(this.position);
   }
 
-  private get C(): Vector {
+  public get C(): Vector {
     return this._C.add(this.position);
   }
 
-  private get D(): Vector {
+  public get D(): Vector {
     return this._D.add(this.position);
   }
 
@@ -43,20 +43,24 @@ export class Quadrilateral extends Shape {
     return [this.A, this.B, this.C, this.D];
   }
 
-  public get edges(): Array<Line> {
-    return [
-      new Line(this.A, this.B),
-      new Line(this.B, this.C),
-      new Line(this.C, this.D),
-      new Line(this.D, this.A),
-    ];
+  public get edgesArray(): Array<Line> {
+    return [this.edges.a, this.edges.b, this.edges.c, this.edges.d];
+  }
+
+  public get edges() {
+    return {
+      a: new Line(this.A, this.B),
+      b: new Line(this.B, this.C),
+      c: new Line(this.C, this.D),
+      d: new Line(this.D, this.A),
+    };
   }
 
   private getInfinityRayIntersectionCount(point: Vector): number {
     const overlappingVertices = Array<Vector>();
     const ray = new Line(point, new Vector(Infinity, point.y));
 
-    return this.edges.filter((edge: Line) => {
+    return this.edgesArray.filter((edge: Line) => {
       if (!edge.intersects(ray)) return false;
 
       if (edge.A.y.equals(point.y)) {
@@ -110,7 +114,7 @@ export class Quadrilateral extends Shape {
 
     let rayIntersections = 0;
 
-    const edgeIntersections = this.edges.find((edge: Line) => {
+    const edgeIntersections = this.edgesArray.find((edge: Line) => {
       if (edge.A.subtract(circle.position).magnitude.lessThan(circle.radius)) {
         return true;
       }

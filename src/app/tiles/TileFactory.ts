@@ -1,4 +1,5 @@
 import Sprite from "../sprites/Sprite";
+import { RoadTile } from "./RoadTile";
 import Tile, { NullTile } from "./Tile";
 
 export interface TileConfiguration {
@@ -36,6 +37,9 @@ export default class TileFactory {
   ): Tile {
     let configuration = this.tileConfiguration.get(tileType);
 
+    if (tileType == "road") {
+      return new RoadTile(column, row, x, y, sprite, configuration);
+    }
     return new Tile(column, row, x, y, sprite, configuration);
   }
 }
