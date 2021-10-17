@@ -43,24 +43,20 @@ export class Quadrilateral extends Shape {
     return [this.A, this.B, this.C, this.D];
   }
 
-  public get edgesArray(): Array<Line> {
-    return [this.edges.a, this.edges.b, this.edges.c, this.edges.d];
-  }
-
-  public get edges() {
-    return {
-      a: new Line(this.A, this.B),
-      b: new Line(this.B, this.C),
-      c: new Line(this.C, this.D),
-      d: new Line(this.D, this.A),
-    };
+  public get edges(): Array<Line> {
+    return [
+      new Line(this.A, this.B),
+      new Line(this.B, this.C),
+      new Line(this.C, this.D),
+      new Line(this.D, this.A),
+    ];
   }
 
   private getInfinityRayIntersectionCount(point: Vector): number {
     const overlappingVertices = Array<Vector>();
     const ray = new Line(point, new Vector(Infinity, point.y));
 
-    return this.edgesArray.filter((edge: Line) => {
+    return this.edges.filter((edge: Line) => {
       if (!edge.intersects(ray)) return false;
 
       if (edge.A.y.equals(point.y)) {
@@ -114,7 +110,7 @@ export class Quadrilateral extends Shape {
 
     let rayIntersections = 0;
 
-    const edgeIntersections = this.edgesArray.find((edge: Line) => {
+    const edgeIntersections = this.edges.find((edge: Line) => {
       if (edge.A.subtract(circle.position).magnitude.lessThan(circle.radius)) {
         return true;
       }

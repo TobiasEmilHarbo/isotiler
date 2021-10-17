@@ -1,8 +1,8 @@
 import Buffer from "../Buffer";
 import Camera from "../Camera";
+import { RoadTile } from "../tiles/RoadTile";
 import Tile from "../tiles/Tile";
 import TileGrid from "../tiles/TileGrid";
-import Vector from "../Vector";
 import LayerRenderer from "./LayerRenderer";
 
 export class TileLineRenderer implements LayerRenderer {
@@ -15,15 +15,19 @@ export class TileLineRenderer implements LayerRenderer {
     );
 
     tiles.forEach((tile) => {
-      // this.buffer.context.strokeStyle = "black";
+      this.buffer.context.strokeStyle = "black";
 
-      // this.buffer.draw(tile.perimeter);
+      this.buffer.draw(tile.perimeter);
 
-      this.buffer.context.strokeStyle = "red";
+      if (tile instanceof RoadTile) {
+        this.buffer.context.strokeStyle = "red";
 
-      tile.getPath()?.forEach((destination) => {
-        this.buffer.draw(destination);
-      });
+        for (let path of tile.getPaths()) {
+          path.forEach((destination) => {
+            this.buffer.draw(destination);
+          });
+        }
+      }
 
       // this.buffer.context.fillStyle = "orange";
       // this.buffer.context.font = "bold 12px verdana, sans-serif ";
