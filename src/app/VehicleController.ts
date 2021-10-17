@@ -1,5 +1,6 @@
 import Entity from "./Entities/Entity";
 import KeyboardControl, { KEYS, KEY_STATES } from "./Inputs/KeyboardControl";
+import { RoadTile } from "./tiles/RoadTile";
 import Tile from "./tiles/Tile";
 import Brake from "./Traits/Break";
 import MoveForward from "./Traits/MoveForward";
@@ -38,8 +39,11 @@ export class VehicleController {
   }
 
   public update(deltaTime: number) {
-    if (this.lastTile != this.entity.currentTile) {
-      this.journey = this.entity.currentTile.getPath();
+    if (
+      this.lastTile != this.entity.currentTile &&
+      this.entity.currentTile instanceof RoadTile
+    ) {
+      // this.journey = this.entity.currentTile.getPath();
       this.lastTile = this.entity.currentTile;
     }
 

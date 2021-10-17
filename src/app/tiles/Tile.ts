@@ -1,5 +1,4 @@
 import { Quadrilateral } from "../geometry/Quadrilateral";
-import Shape from "../geometry/Shape";
 import { Drawable } from "../library/Drawable";
 import Sprite from "../sprites/Sprite";
 import Vector from "../Vector";
@@ -13,8 +12,6 @@ export default class Tile implements Drawable {
 
   private _stickiness: number = 1;
   private _type: string;
-
-  private path: Array<Vector> = [];
 
   constructor(
     private _column: number,
@@ -33,14 +30,6 @@ export default class Tile implements Drawable {
 
     this._stickiness = stickiness ? stickiness : this._stickiness;
     this._type = type;
-  }
-
-  public setPath(path: Array<Vector>) {
-    this.path = path;
-  }
-
-  public getPath(): Array<Vector> {
-    return this.path;
   }
 
   public get id(): string {
@@ -77,6 +66,37 @@ export default class Tile implements Drawable {
 
   public get type(): string {
     return this._type;
+  }
+
+  public getAdjacentTileCoordinates(
+    includeCorners: boolean = false
+  ): Array<{ column: number; row: number }> {
+    let offsets = [
+      { column: 0, row: -1 },
+      { column: 1, row: 0 },
+      { column: 0, row: 1 },
+      { column: -1, row: 0 },
+    ];
+
+    if (includeCorners) {
+      offsets = [
+        offsets[0],
+        { column: 1, row: -1 },
+        offsets[1],
+        { column: 1, row: 1 },
+        offsets[2],
+        { column: -1, row: 1 },
+        offsets[3],
+        { column: -1, row: -1 },
+      ];
+    }
+
+    return offsets.map(({ column, row }) => {
+      return {
+        column: column + this.column,
+        row: row + this.row,
+      };
+    });
   }
 
   public draw(context: CanvasRenderingContext2D): void {

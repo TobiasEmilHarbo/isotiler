@@ -24,6 +24,8 @@ export enum RoadConnections {
 
 export class RoadTile extends Tile {
   private roadType: RoadConnections;
+  private path: Array<Vector> = [];
+  private paths = new Map<string, Array<Vector>>();
 
   constructor(
     column: number,
@@ -36,114 +38,97 @@ export class RoadTile extends Tile {
     super(column, row, x, y, sprite, configuration);
   }
 
-  public initialize(type: RoadConnections) {
-    for (let i = 0; i < type.length; i++) {
-      const connection = type[i];
+  public initialize(connections: RoadConnections) {
+    for (
+      let ingressEdgeIndex = 0;
+      ingressEdgeIndex < connections.length;
+      ingressEdgeIndex++
+    ) {
+      if ("0" == connections[ingressEdgeIndex]) continue;
 
-      for (let j = 0; j < type.length; j++) {
-        if (i == j) continue;
-        const connection = type[j];
+      for (
+        let egressEdgeIndex = 0;
+        egressEdgeIndex < connections.length;
+        egressEdgeIndex++
+      ) {
+        if ("0" == connections[egressEdgeIndex]) continue;
+        if (ingressEdgeIndex == egressEdgeIndex) continue;
+
+        const pathId = this.getPathId(ingressEdgeIndex, egressEdgeIndex);
+        const path = this.generatePath(ingressEdgeIndex, egressEdgeIndex);
+        this.paths.set(pathId, path);
       }
     }
   }
 
+  private getPathId(ingressEdgeIndex: number, egressEdgeIndex: number): string {
+    const adjacentCoordinates = this.getAdjacentTileCoordinates();
+
+    const { column: ingressColumn, row: ingressRow } =
+      adjacentCoordinates[ingressEdgeIndex];
+    const { column: egressColumn, row: egressRow } =
+      adjacentCoordinates[egressEdgeIndex];
+
+    return (
+      String(ingressColumn) +
+      String(ingressRow) +
+      String(egressColumn) +
+      String(egressRow)
+    );
+  }
+
+  private generatePath(
+    ingressEdgeIndex: number,
+    egressEdgeIndex: number
+  ): Array<Vector> {
+    const ingressEdge = this.perimeter.edges[ingressEdgeIndex];
+    const egressEdge = this.perimeter.edges[egressEdgeIndex];
+
+    const path = Array<Vector>();
+
+    path.push(this.ingressPoint(ingressEdge));
+
+    if (isTurn(ingressEdgeIndex, egressEdgeIndex)) {
+      if (Math.abs(ingressEdgeIndex - egressEdgeIndex) == 3) {
+        if (ingressEdgeIndex < egressEdgeIndex) {
+          path.push(
+            ...this.innerTurn(
+              this.perimeter.edges[ingressEdgeIndex],
+              this.perimeter.edges[egressEdgeIndex]
+            )
+          );
+        } else {
+          path.push(
+            ...this.outerTurn(
+              this.perimeter.edges[ingressEdgeIndex],
+              this.perimeter.edges[egressEdgeIndex]
+            )
+          );
+        }
+      } else if (ingressEdgeIndex > egressEdgeIndex) {
+        path.push(
+          ...this.innerTurn(
+            this.perimeter.edges[ingressEdgeIndex],
+            this.perimeter.edges[egressEdgeIndex]
+          )
+        );
+      } else {
+        path.push(
+          ...this.outerTurn(
+            this.perimeter.edges[ingressEdgeIndex],
+            this.perimeter.edges[egressEdgeIndex]
+          )
+        );
+      }
+    }
+
+    path.push(this.egressPoint(egressEdge));
+
+    return path;
+  }
+
   public initializeRoad(type: RoadConnections) {
-    const a = 126.87 / 5;
-
-    const b = 53.13 / 3;
-
-    const innerCorner = [a, a * 2, a * 3, a * 4].map((degrees) => {
-      return this.perimeter.C.add(
-        this.perimeter.D.subtract(this.perimeter.C)
-          .multiply(2 / 8)
-          .rotate(degrees)
-      );
-    });
-
-    const innerCorner2 = [a, a * 2, a * 3, a * 4].map((degrees) => {
-      return this.perimeter.A.add(
-        this.perimeter.B.subtract(this.perimeter.A)
-          .multiply(2 / 8)
-          .rotate(degrees)
-      );
-    });
-
-    const innerCorner3 = [b, b * 2].map((degrees) => {
-      return this.perimeter.B.add(
-        this.perimeter.C.subtract(this.perimeter.B)
-          .multiply(2.5 / 8)
-          .rotate(degrees)
-      );
-    });
-
-    const innerCorner4 = [b, b * 2].map((degrees) => {
-      return this.perimeter.D.add(
-        this.perimeter.A.subtract(this.perimeter.D)
-          .multiply(2.5 / 8)
-          .rotate(degrees)
-      );
-    });
-
-    this.setPath([
-      // ...this.innerShallowTurn(
-      //   this.perimeter.C,
-      //   this.perimeter.D,
-      //   this.perimeter.B,
-      //   this.perimeter.A
-      // ),
-      // ...innerCorner,
-      // ...innerCorner2,
-      // ...innerCorner3,
-      // ...innerCorner4,
-    ]);
-
-    const outerCorner3 = [b * 2, b].map((degrees) => {
-      return this.perimeter.B.add(
-        this.perimeter.C.subtract(this.perimeter.B)
-          .multiply(2.5 / 8)
-          .rotate(degrees)
-      ).add(this.perimeter.D.subtract(this.perimeter.B).multiply(2 / 4));
-    });
-
-    const outerCorner4 = [b * 2, b].map((degrees) => {
-      return this.perimeter.D.add(
-        this.perimeter.A.subtract(this.perimeter.D)
-          .multiply(2.5 / 8)
-          .rotate(degrees)
-      ).add(this.perimeter.B.subtract(this.perimeter.D).multiply(2 / 4));
-    });
-
-    this.setPath([
-      this.ingressPoint(this.perimeter.edges.c),
-      this.egressPoint(this.perimeter.edges.b),
-      ...this.innerShallowTurn2(this.perimeter.edges.c, this.perimeter.edges.b),
-      // this.entryPoint(this.perimeter.C, this.perimeter.D, this.perimeter.B),
-      // this.exitPoint(this.perimeter.B, this.perimeter.C, this.perimeter.D),
-      // this.entryPoint(this.perimeter.A, this.perimeter.B, this.perimeter.D),
-      // this.entryPoint(this.perimeter.D, this.perimeter.A, this.perimeter.C),
-      // this.entryPoint(this.perimeter.B, this.perimeter.C, this.perimeter.A),
-      // this.entryPoint(this.perimeter.B, this.perimeter.A, this.perimeter.C),
-      // this.entryPoint(this.perimeter.C, this.perimeter.B, this.perimeter.D),
-      // this.entryPoint(this.perimeter.D, this.perimeter.C, this.perimeter.A),
-      // this.entryPoint(this.perimeter.A, this.perimeter.D, this.perimeter.B),
-      // this.entryPoint(this.perimeter.A, this.perimeter.B),
-      // this.entryPoint(this.perimeter.B, this.perimeter.C),
-      // ...this.outerShallowTurn(
-      //   this.perimeter.C,
-      //   this.perimeter.B,
-      //   this.perimeter.A,
-      //   this.perimeter.D
-      // ),
-      // ...outerShallowTurn(
-      //   this.perimeter.A,
-      //   this.perimeter.D,
-      //   this.perimeter.C,
-      //   this.perimeter.B
-      // ),
-      // ...outerCorner2,
-      // ...outerCorner3,
-      // ...outerCorner4,
-    ]);
+    this.initialize(type);
   }
 
   private egressPoint(edge: Line): Vector {
@@ -156,73 +141,58 @@ export class RoadTile extends Tile {
     return edgeOrigin.multiply(2.5 / 8).add(edge.A);
   }
 
-  private enterExitPoint(enter: Vector, inner: Vector, outer: Vector): Vector {
-    return enter
-      .subtract(inner)
-      .multiply(11.5 / 16)
-      .add(inner)
-      .subtract(enter.subtract(outer).multiply(1 / 8));
-  }
+  private innerTurn(ingressEdge: Line, egressEdge: Line): Array<Vector> {
+    const angleBetweenEdges = egressEdge.A.subtract(egressEdge.B).angleBetween(
+      ingressEdge.B.subtract(ingressEdge.A)
+    );
 
-  private innerShallowTurn2(
-    ingressEdge: Line,
-    egressEdge: Line
-  ): Array<Vector> {
-    const a = 126.87 / 4;
+    let turn;
 
-    const turn = [a, a * 2, a * 3].map((degrees) => {
-      return ingressEdge.A.add(
-        ingressEdge.B.subtract(ingressEdge.A)
-          .multiply(4 / 16) //diameter of turn
-          .rotate(degrees)
-      );
-    });
-    return turn;
-  }
+    if (angleBetweenEdges > 90) {
+      const step = angleBetweenEdges / 4;
 
-  private innerShallowTurn(
-    inner: Vector,
-    enter: Vector,
-    outer: Vector,
-    exit: Vector
-  ): Array<Vector> {
-    const a = 126.87 / 5;
-
-    const turn = [a, a * 4].map((degrees) => {
-      return inner
-        .add(
-          enter
-            .subtract(inner)
-            .multiply(5 / 16) //diameter of turn
+      turn = [step, step * 2, step * 3].map((degrees) => {
+        return ingressEdge.A.add(
+          ingressEdge.B.subtract(ingressEdge.A)
+            .multiply(8 / 32) //diameter of turn
             .rotate(degrees)
-        )
-        .add(outer.subtract(inner).multiply(1.5 / 4));
-    });
+        );
+      });
+    } else {
+      const step = angleBetweenEdges / 3;
+
+      turn = [step, step * 2].map((degrees) => {
+        return ingressEdge.A.add(
+          ingressEdge.B.subtract(ingressEdge.A)
+            .multiply(12 / 32) //diameter of turn
+            .rotate(degrees)
+        );
+      });
+    }
+
     return turn;
   }
 
-  private outerShallowTurn(
-    inner: Vector,
-    enter: Vector,
-    outer: Vector,
-    exit: Vector
-  ): Array<Vector> {
-    const a = 126.87 / 5;
+  private outerTurn(ingressEdge: Line, egressEdge: Line): Array<Vector> {
+    const turn = [
+      this.egressPoint(ingressEdge),
+      ...this.innerTurn(egressEdge, ingressEdge),
+      this.ingressPoint(egressEdge),
+    ].map((point) =>
+      point
+        .add(ingressEdge.A.subtract(ingressEdge.B).multiply(6.5 / 16))
+        .add(egressEdge.B.subtract(egressEdge.A).multiply(6.5 / 16))
+    );
 
-    const turn = [a, a * 4].map((degrees) => {
-      return inner
-        .add(
-          enter
-            .subtract(inner)
-            .multiply(4 / 16) //diameter of turn
-            .rotate(-degrees)
-        )
-        .add(outer.subtract(inner).multiply(1.5 / 4));
-    });
+    return turn.reverse();
+  }
 
-    const en = this.enterExitPoint(enter, inner, outer);
-    const ex = this.enterExitPoint(exit, inner, outer);
-    return [en, ...turn, ex];
+  public setPath(path: Array<Vector>) {
+    this.path = path;
+  }
+
+  public getPaths(fromTile?: Tile, toTile?: Tile): IterableIterator<Vector[]> {
+    return this.paths.values();
   }
 
   public setRoadType(type: RoadConnections) {
@@ -233,3 +203,7 @@ export class RoadTile extends Tile {
     this._sprite = sprite;
   }
 }
+
+const isTurn = (ingressEdgeIndex: number, egressEdgeIndex: number): boolean => {
+  return !((ingressEdgeIndex + egressEdgeIndex) % 2 == 0);
+};
