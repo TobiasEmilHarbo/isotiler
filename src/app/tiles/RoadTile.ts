@@ -1,4 +1,5 @@
 import Line from "../geometry/Line";
+import { Path } from "../Path";
 import Sprite from "../sprites/Sprite";
 import Vector from "../Vector";
 import Tile from "./Tile";
@@ -25,7 +26,7 @@ export enum RoadConnections {
 export class RoadTile extends Tile {
   private roadType: RoadConnections;
   private path: Array<Vector> = [];
-  private paths = new Map<string, Array<Vector>>();
+  private paths = new Map<string, Path>();
 
   constructor(
     column: number,
@@ -80,25 +81,25 @@ export class RoadTile extends Tile {
   private generatePath(
     ingressEdgeIndex: number,
     egressEdgeIndex: number
-  ): Array<Vector> {
+  ): Path {
     const ingressEdge = this.perimeter.edges[ingressEdgeIndex];
     const egressEdge = this.perimeter.edges[egressEdgeIndex];
 
-    const path = Array<Vector>();
+    const path = new Path();
 
-    path.push(this.ingressPoint(ingressEdge));
+    path.add(this.ingressPoint(ingressEdge));
 
     if (isTurn(ingressEdgeIndex, egressEdgeIndex)) {
       if (Math.abs(ingressEdgeIndex - egressEdgeIndex) == 3) {
         if (ingressEdgeIndex < egressEdgeIndex) {
-          path.push(
+          path.add(
             ...this.innerTurn(
               this.perimeter.edges[ingressEdgeIndex],
               this.perimeter.edges[egressEdgeIndex]
             )
           );
         } else {
-          path.push(
+          path.add(
             ...this.outerTurn(
               this.perimeter.edges[ingressEdgeIndex],
               this.perimeter.edges[egressEdgeIndex]
@@ -106,14 +107,14 @@ export class RoadTile extends Tile {
           );
         }
       } else if (ingressEdgeIndex > egressEdgeIndex) {
-        path.push(
+        path.add(
           ...this.innerTurn(
             this.perimeter.edges[ingressEdgeIndex],
             this.perimeter.edges[egressEdgeIndex]
           )
         );
       } else {
-        path.push(
+        path.add(
           ...this.outerTurn(
             this.perimeter.edges[ingressEdgeIndex],
             this.perimeter.edges[egressEdgeIndex]
@@ -122,7 +123,7 @@ export class RoadTile extends Tile {
       }
     }
 
-    path.push(this.egressPoint(egressEdge));
+    path.add(this.egressPoint(egressEdge));
 
     return path;
   }
@@ -175,9 +176,9 @@ export class RoadTile extends Tile {
 
   private outerTurn(ingressEdge: Line, egressEdge: Line): Array<Vector> {
     const turn = [
-      this.egressPoint(ingressEdge),
-      ...this.innerTurn(egressEdge, ingressEdge),
       this.ingressPoint(egressEdge),
+      ...this.innerTurn(egressEdge, ingressEdge),
+      this.egressPoint(ingressEdge),
     ].map((point) =>
       point
         .add(ingressEdge.A.subtract(ingressEdge.B).multiply(6.5 / 16))
@@ -187,12 +188,19 @@ export class RoadTile extends Tile {
     return turn.reverse();
   }
 
-  public setPath(path: Array<Vector>) {
-    this.path = path;
+  public getPaths(): IterableIterator<Path> {
+    return this.paths.values();
   }
 
-  public getPaths(fromTile?: Tile, toTile?: Tile): IterableIterator<Vector[]> {
-    return this.paths.values();
+  public getPath(fromTile: Tile, toTile: Tile): Path {
+    const pathId =
+      String(fromTile.column) +
+      String(fromTile.row) +
+      String(toTile.column) +
+      String(toTile.row);
+
+    const path = this.paths.get(pathId);
+    return !path ? new Path() : path;
   }
 
   public setRoadType(type: RoadConnections) {

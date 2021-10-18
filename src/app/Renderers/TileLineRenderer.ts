@@ -3,6 +3,7 @@ import Camera from "../Camera";
 import { RoadTile } from "../tiles/RoadTile";
 import Tile from "../tiles/Tile";
 import TileGrid from "../tiles/TileGrid";
+import TileResolver from "../tiles/TileResolver";
 import LayerRenderer from "./LayerRenderer";
 
 export class TileLineRenderer implements LayerRenderer {
@@ -23,9 +24,7 @@ export class TileLineRenderer implements LayerRenderer {
         this.buffer.context.strokeStyle = "red";
 
         for (let path of tile.getPaths()) {
-          path.forEach((destination) => {
-            this.buffer.draw(destination);
-          });
+          this.buffer.draw(path);
         }
       }
 
@@ -39,6 +38,54 @@ export class TileLineRenderer implements LayerRenderer {
       //   tile.center.y + 4
       // );
     });
+
+    const tileResolver = new TileResolver(tiles);
+
+    const roadTiles = [
+      { column: 8, row: 10 },
+      { column: 7, row: 10 },
+      { column: 7, row: 11 },
+      { column: 7, row: 12 },
+      { column: 7, row: 13 },
+      { column: 8, row: 13 },
+      { column: 9, row: 13 },
+      { column: 10, row: 13 },
+      { column: 10, row: 12 },
+      { column: 10, row: 11 },
+      { column: 10, row: 10 },
+      { column: 10, row: 9 },
+      { column: 10, row: 8 },
+      { column: 11, row: 8 },
+      { column: 12, row: 8 },
+      { column: 13, row: 8 },
+      { column: 14, row: 8 },
+      { column: 14, row: 9 },
+      { column: 14, row: 10 },
+      { column: 13, row: 10 },
+      { column: 12, row: 10 },
+      { column: 11, row: 10 },
+      { column: 10, row: 10 },
+      { column: 9, row: 10 },
+      { column: 8, row: 10 },
+    ];
+
+    this.buffer.context.strokeStyle = "blue";
+
+    for (let index = 0; index < roadTiles.length; index++) {
+      const coorA = roadTiles[index - 1];
+      const coorB = roadTiles[index];
+      const coorC = roadTiles[index + 1];
+      if (!coorA || !coorC) continue;
+
+      const tileA = tiles.get(coorA.column, coorA.row);
+      const tileB = tiles.get(coorB.column, coorB.row);
+      const tileC = tiles.get(coorC.column, coorC.row);
+
+      if (tileB instanceof RoadTile) {
+        const path = tileB.getPath(tileA, tileC);
+        this.buffer.draw(path);
+      }
+    }
   }
 
   public update(deltaTime: number) {}
