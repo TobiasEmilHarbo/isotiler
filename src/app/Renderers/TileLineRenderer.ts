@@ -39,8 +39,6 @@ export class TileLineRenderer implements LayerRenderer {
       // );
     });
 
-    const tileResolver = new TileResolver(tiles);
-
     const roadTiles = [
       { column: 8, row: 10 },
       { column: 7, row: 10 },

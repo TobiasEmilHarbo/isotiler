@@ -1,8 +1,8 @@
 import { Graph } from "./graph";
 import { GraphEdge } from "./GraphEdge";
-import Tile from "../tiles/Tile";
-import TileGrid from "../tiles/TileGrid";
-import TileResolver from "../tiles/TileResolver";
+import Tile from "../../tiles/Tile";
+import TileGrid from "../../tiles/TileGrid";
+import TileResolver from "../../tiles/TileResolver";
 
 interface Node {
   nodeTile: Tile;
