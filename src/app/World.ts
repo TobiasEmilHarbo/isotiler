@@ -8,7 +8,7 @@ import LayerCompositor from "./Renderers/LayerCompositor";
 import { EntityFactory } from "./Entities/EntityFactory";
 import TileRenderer from "./Renderers/TileRender";
 import { Entities } from "./Entities/Entities";
-import { RoadGraph } from "./graph/RoadGraph";
+import { RoadGraph } from "./data-structures/graph/RoadGraph";
 import TileGrid from "./tiles/TileGrid";
 import Entity from "./Entities/Entity";
 import Tile from "./tiles/Tile";
@@ -21,6 +21,7 @@ import MouseControl, {
   MOUSE_EVENTS,
   noModifiers,
 } from "./Inputs/MouseControl";
+import { StaticRenderer } from "./Renderers/StaticRenderer";
 
 export default class World {
   private compositor = new LayerCompositor();
@@ -47,34 +48,25 @@ export default class World {
     this.entities.push(redSedan);
     this.entities.push(garbageTruck);
 
-    // this.camera.setEntityInFocus(garbageTruck);
+    this.camera.setEntityInFocus(garbageTruck);
     this.camera.setFocus(garbageTruck.position);
 
-    // this.entityController = new VehicleController();
-    // this.entityController.setEntity(garbageTruck);
+    this.entityController = new VehicleController();
+    this.entityController.setEntity(garbageTruck);
 
-    const tileRenderer = new TileRenderer(this._camera, this.tileGrid);
-    const tileLineRenderer = new TileLineRenderer(this._camera, this.tileGrid);
+    this.compositor.addLayer(new TileRenderer(this.camera, this.tileGrid));
+    this.compositor.addLayer(new EntityRenderer(this.camera, this.entities));
 
-    const entityRenderer = new EntityRenderer(this._camera, this.entities);
-    const entityLineRenderer = new EntityLineRenderer(
-      this._camera,
-      this.entities
+    this.compositor.addLayer(new TileLineRenderer(this.camera, this.tileGrid));
+    this.compositor.addLayer(
+      new RoadGraphRenderer(this.camera, new RoadGraph(this.tileGrid))
     );
+    this.compositor.addLayer(
+      new EntityLineRenderer(this.camera, this.entities)
+    );
+    this.compositor.addLayer(new CameraLineRenderer(this.camera));
 
-    const roadGraph = new RoadGraph(this.tileGrid);
-
-    const roadGraphRenderer = new RoadGraphRenderer(this._camera, roadGraph);
-
-    const cameraLineRenderer = new CameraLineRenderer(this._camera);
-
-    this.compositor.addLayer(tileRenderer);
-    this.compositor.addLayer(entityRenderer);
-
-    this.compositor.addLayer(tileLineRenderer);
-    // this.compositor.addLayer(roadGraphRenderer);
-    this.compositor.addLayer(entityLineRenderer);
-    // this.compositor.addLayer(cameraLineRenderer);
+    this.compositor.addLayer(new StaticRenderer(this.camera));
 
     // const mouse = new MouseControl(true);
     // mouse.addEventMapping(MOUSE_EVENTS.CLICK, {
