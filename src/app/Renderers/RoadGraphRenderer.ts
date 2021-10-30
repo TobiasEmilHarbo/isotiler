@@ -2,7 +2,7 @@ import Buffer from "../Buffer";
 import Camera from "../Camera";
 import Line from "../geometry/Line";
 import Rectangle from "../geometry/Rectangle";
-import { RoadGraph } from "../graph/RoadGraph";
+import { RoadGraph } from "../data-structures/graph/RoadGraph";
 import Vector from "../Vector";
 import LayerRenderer from "./LayerRenderer";
 

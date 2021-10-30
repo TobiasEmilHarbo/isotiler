@@ -1,9 +1,10 @@
 import Vector from "../Vector";
 
+type EventAction = (mouseCoordinates: Vector, modifiers: Modifiers) => void;
 export interface EventActions {
-  [BUTTON.LEFT]?: (mouseCoordinates: Vector, modifiers: Modifiers) => void;
-  [BUTTON.MIDDLE]?: (mouseCoordinates: Vector, modifiers: Modifiers) => void;
-  [BUTTON.RIGHT]?: (mouseCoordinates: Vector, modifiers: Modifiers) => void;
+  [BUTTON.LEFT]?: EventAction;
+  [BUTTON.MIDDLE]?: EventAction;
+  [BUTTON.RIGHT]?: EventAction;
 }
 
 export interface Modifiers {
@@ -14,6 +15,7 @@ export interface Modifiers {
 
 export enum MOUSE_EVENTS {
   CLICK = "click",
+  RIGHT_CLICK = "contextmenu",
   MOUSE_UP = "mouseup",
   MOUSE_DOWN = "mousedown",
 }
@@ -32,18 +34,20 @@ export enum MODIFIER {
 
 class MouseListener {
   private static keyboardListener = new MouseListener();
-  private target: EventTarget = document;
 
   private listeners = Array<MouseControl>();
+  private targetSelector = "canvas";
 
   private constructor() {
-    [
-      MOUSE_EVENTS.MOUSE_DOWN,
-      MOUSE_EVENTS.MOUSE_UP,
-      MOUSE_EVENTS.CLICK,
-    ].forEach((event) =>
-      this.target.addEventListener(event, this.onMouseEvent.bind(this))
-    );
+    window.onload = () => {
+      const target = document.querySelector(this.targetSelector);
+      if (!target) return;
+      Object.values(MOUSE_EVENTS).forEach((event) =>
+        target.addEventListener(event, (event: MouseEvent) => {
+          this.onMouseEvent(event);
+        })
+      );
+    };
   }
 
   private onMouseEvent(event: MouseEvent): void {
@@ -78,9 +82,10 @@ export default class MouseControl {
 
     const actions = this.eventMapping.get(type);
     const action = actions[event.button as BUTTON];
-    // event.preventDefault();
 
     if (!action) return;
+
+    event.preventDefault();
 
     action(new Vector(event.offsetX, event.offsetY), {
       [MODIFIER.CTRL]: event.ctrlKey,
@@ -98,12 +103,25 @@ export default class MouseControl {
   }
 }
 
+export const noModifiers = function (action: EventAction): EventAction {
+  return (mouseCoordinates: Vector, modifiers: Modifiers) => {
+    if (Object.values(modifiers).every((activated) => !activated)) {
+      return action(mouseCoordinates, modifiers);
+    }
+  };
+};
+
 export const modifiers = function (
   requiredModifiers: Array<MODIFIER>,
-  action: (mouseCoordinates: Vector, modifiers: Modifiers) => void
-) {
+  action: EventAction
+): EventAction {
   return (mouseCoordinates: Vector, modifiers: Modifiers) => {
-    if (requiredModifiers.every((modifier) => !!modifiers[modifier]))
+    if (
+      requiredModifiers.every(
+        (requiredModifier) => !!modifiers[requiredModifier]
+      )
+    ) {
       return action(mouseCoordinates, modifiers);
+    }
   };
 };

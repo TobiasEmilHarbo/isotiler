@@ -23,19 +23,19 @@ export class Quadrilateral extends Shape {
     return path;
   }
 
-  private get A(): Vector {
+  public get A(): Vector {
     return this._A.add(this.position);
   }
 
-  private get B(): Vector {
+  public get B(): Vector {
     return this._B.add(this.position);
   }
 
-  private get C(): Vector {
+  public get C(): Vector {
     return this._C.add(this.position);
   }
 
-  private get D(): Vector {
+  public get D(): Vector {
     return this._D.add(this.position);
   }
 
