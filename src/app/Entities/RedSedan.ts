@@ -9,7 +9,7 @@ import TurnRight from "../Traits/TurnRight";
 import MoveBackward from "../Traits/MoveBackward";
 import MoveForward from "../Traits/MoveForward";
 import Drag from "../Traits/Drag";
-import Break from "../Traits/Break";
+import Brake from "../Traits/Break";
 import Velocity from "../Traits/Velocity";
 import Circle from "../geometry/Circle";
 import RigidBody from "../Traits/RigidBody";
@@ -40,7 +40,7 @@ export default class RedSedan extends Entity {
     const moveForwardsTrait = new MoveForward(175, 400);
     const turnLeftTrait = new TurnLeft(900, false);
     const turnRightTrait = new TurnRight(900, false);
-    const breakTrait = new Break(400);
+    const breakTrait = new Brake(400);
 
     const keyboard = new KeyboardControl(false);
 

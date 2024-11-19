@@ -9,7 +9,7 @@ import TurnRight from "../Traits/TurnRight";
 import MoveBackward from "../Traits/MoveBackward";
 import MoveForward from "../Traits/MoveForward";
 import Drag from "../Traits/Drag";
-import Break from "../Traits/Break";
+import Brake from "../Traits/Break";
 import Velocity from "../Traits/Velocity";
 import Circle from "../geometry/Circle";
 import RigidBody from "../Traits/RigidBody";
@@ -32,15 +32,15 @@ export default class GarbageTruck extends Entity {
     spriteSheet.define("E", 3, 47, 33, 28, new Vector(17, 17));
     spriteSheet.define("NE", 122, 6, 35, 30, new Vector(18, 18));
 
-    this.heading = Vector.WEST;
+    this.heading = new Vector(-2, -1);
     this._hitBox = new Circle(this.position, 12);
-    this.sprite = this.spriteSheet.get(Direction.WEST);
+    this.sprite = this.spriteSheet.get(Direction.NORTH_WEST);
 
     const moveBackwardsTrait = new MoveBackward(100, 300);
     const moveForwardsTrait = new MoveForward(175, 400);
     const turnLeftTrait = new TurnLeft(900, false);
     const turnRightTrait = new TurnRight(900, false);
-    const breakTrait = new Break(400);
+    const breakTrait = new Brake(400);
 
     const keyboard = new KeyboardControl(true);
 

@@ -1,5 +1,4 @@
 import { Quadrilateral } from "../geometry/Quadrilateral";
-import Shape from "../geometry/Shape";
 import { Drawable } from "../library/Drawable";
 import Sprite from "../sprites/Sprite";
 import Vector from "../Vector";
@@ -19,7 +18,7 @@ export default class Tile implements Drawable {
     private _row: number,
     private x: number,
     private y: number,
-    private _sprite: Sprite,
+    protected _sprite: Sprite,
     { stickiness, type }: TileConfiguration
   ) {
     this._perimeter = new Quadrilateral(
@@ -53,11 +52,7 @@ export default class Tile implements Drawable {
     return this._sprite.height;
   }
 
-  public set sprite(sprite: Sprite) {
-    this._sprite = sprite;
-  }
-
-  public get perimeter(): Shape {
+  public get perimeter(): Quadrilateral {
     return this._perimeter;
   }
 
@@ -71,6 +66,37 @@ export default class Tile implements Drawable {
 
   public get type(): string {
     return this._type;
+  }
+
+  public getAdjacentTileCoordinates(
+    includeCorners: boolean = false
+  ): Array<{ column: number; row: number }> {
+    let offsets = [
+      { column: 0, row: -1 },
+      { column: 1, row: 0 },
+      { column: 0, row: 1 },
+      { column: -1, row: 0 },
+    ];
+
+    if (includeCorners) {
+      offsets = [
+        offsets[0],
+        { column: 1, row: -1 },
+        offsets[1],
+        { column: 1, row: 1 },
+        offsets[2],
+        { column: -1, row: 1 },
+        offsets[3],
+        { column: -1, row: -1 },
+      ];
+    }
+
+    return offsets.map(({ column, row }) => {
+      return {
+        column: column + this.column,
+        row: row + this.row,
+      };
+    });
   }
 
   public draw(context: CanvasRenderingContext2D): void {

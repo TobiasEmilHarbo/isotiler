@@ -23,29 +23,9 @@ export default class TileResolver {
     type?: string,
     includeCorners: boolean = false
   ) {
-    let offsets = [
-      { column: 0, row: -1 },
-      { column: 1, row: 0 },
-      { column: 0, row: 1 },
-      { column: -1, row: 0 },
-    ];
-
-    if (includeCorners) {
-      offsets = [
-        { column: -1, row: -1 },
-        offsets[0],
-        { column: 1, row: -1 },
-        offsets[1],
-        { column: 1, row: 1 },
-        offsets[2],
-        { column: -1, row: 1 },
-        offsets[3],
-      ];
-    }
-
-    const adjacentRoadTile = offsets.map((offset) =>
-      this.tiles.get(tile.column + offset.column, tile.row + offset.row)
-    );
+    const adjacentRoadTile = tile
+      .getAdjacentTileCoordinates(includeCorners)
+      .map(({ column, row }) => this.tiles.get(column, row));
 
     if (!type) {
       return adjacentRoadTile;

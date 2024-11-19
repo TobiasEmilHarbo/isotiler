@@ -1,5 +1,5 @@
-import Sprite from "../sprites/Sprite";
 import SpriteSheet from "../sprites/SpriteSheet";
+import { RoadTile, RoadConnections } from "../tiles/RoadTile";
 import Tile, { NullTile } from "../tiles/Tile";
 import TileGrid from "../tiles/TileGrid";
 import TileResolver from "../tiles/TileResolver";
@@ -7,88 +7,57 @@ import { MapPreprocessor } from "./MapPreprocessor";
 
 export class RoadProcessor implements MapPreprocessor {
   constructor(private spriteSheet: SpriteSheet) {
-    spriteSheet.setDefaultSpriteSize(128, 64);
+    spriteSheet.setDefaultSpriteSize(Tile.WIDTH, Tile.HEIGHT);
 
-    spriteSheet.define("straight-1", 0, 0);
-    spriteSheet.define("straight-2", 128, 0);
-    spriteSheet.define("turn-1", 256, 0);
-    spriteSheet.define("t-cross-1", 0, 64);
-    spriteSheet.define("t-cross-2", 128, 64);
-    spriteSheet.define("turn-2", 256, 64);
-    spriteSheet.define("t-cross-3", 0, 128);
-    spriteSheet.define("t-cross-4", 128, 128);
-    spriteSheet.define("cross", 256, 128);
-    spriteSheet.define("turn-3", 384, 0);
-    spriteSheet.define("turn-4", 384, 64);
-    spriteSheet.define("dead-end-1", 384, 128);
-    spriteSheet.define("dead-end-2", 512, 0);
-    spriteSheet.define("dead-end-3", 512, 64);
-    spriteSheet.define("dead-end-4", 512, 128);
+    spriteSheet.define(RoadConnections.STRAIGHT_NW_SE, 0, 0);
+    spriteSheet.define(RoadConnections.STRAIGHT_SW_NE, Tile.WIDTH, 0);
+    spriteSheet.define(RoadConnections.TURN_NE_SE, Tile.WIDTH * 2, 0);
+    spriteSheet.define(RoadConnections.TURN_NE_NW, Tile.WIDTH * 3, 0);
+    spriteSheet.define(RoadConnections.DEAD_END_SW, Tile.WIDTH * 4, 0);
+    spriteSheet.define(RoadConnections.T_CROSS_NE, 0, Tile.HEIGHT);
+    spriteSheet.define(RoadConnections.T_CROSS_NW, Tile.WIDTH, Tile.HEIGHT);
+    spriteSheet.define(RoadConnections.TURN_SW_NW, Tile.WIDTH * 2, Tile.HEIGHT);
+    spriteSheet.define(RoadConnections.TURN_SW_SE, Tile.WIDTH * 3, Tile.HEIGHT);
+    spriteSheet.define(
+      RoadConnections.DEAD_END_NW,
+      Tile.WIDTH * 4,
+      Tile.HEIGHT
+    );
+    spriteSheet.define(RoadConnections.T_CROSS_SW, 0, Tile.HEIGHT * 2);
+    spriteSheet.define(RoadConnections.T_CROSS_SE, Tile.WIDTH, Tile.HEIGHT * 2);
+    spriteSheet.define(RoadConnections.CROSS, Tile.WIDTH * 2, Tile.HEIGHT * 2);
+    spriteSheet.define(
+      RoadConnections.DEAD_END_SE,
+      Tile.WIDTH * 3,
+      Tile.HEIGHT * 2
+    );
+    spriteSheet.define(
+      RoadConnections.DEAD_END_NE,
+      Tile.WIDTH * 4,
+      Tile.HEIGHT * 2
+    );
   }
 
   public process(grid: TileGrid): TileGrid {
     const resolver = new TileResolver(grid);
 
     const isRoadOrNull = function (tile: Tile) {
-      return tile instanceof NullTile || tile.type == "road";
+      return tile instanceof NullTile || tile instanceof RoadTile;
     };
 
     grid
       .asArray()
-      .filter((tile) => isRoadOrNull(tile))
-      .forEach((tile) => {
+      .filter((tile) => tile instanceof RoadTile)
+      .forEach((tile: RoadTile) => {
         const adjacentTileSequence = resolver
           .getAdjacentTiles(tile)
           .map((tile): string => (isRoadOrNull(tile) ? "1" : "0"))
-          .reduce((prev: string, curr: string): string => prev + curr);
+          .reduce(
+            (sequence: string, type: string) => sequence + type
+          ) as RoadConnections;
 
-        switch (adjacentTileSequence) {
-          case "0001":
-            tile.sprite = this.spriteSheet.get("dead-end-3");
-            break;
-          case "0010":
-            tile.sprite = this.spriteSheet.get("dead-end-2");
-            break;
-          case "0011":
-            tile.sprite = this.spriteSheet.get("turn-2");
-            break;
-          case "0100":
-            tile.sprite = this.spriteSheet.get("dead-end-1");
-            break;
-          case "0101":
-            tile.sprite = this.spriteSheet.get("straight-1");
-            break;
-          case "0110":
-            tile.sprite = this.spriteSheet.get("turn-4");
-            break;
-          case "0111":
-            tile.sprite = this.spriteSheet.get("t-cross-3");
-            break;
-          case "1000":
-            tile.sprite = this.spriteSheet.get("dead-end-4");
-            break;
-          case "1001":
-            tile.sprite = this.spriteSheet.get("turn-3");
-            break;
-          case "1010":
-            tile.sprite = this.spriteSheet.get("straight-2");
-            break;
-          case "1011":
-            tile.sprite = this.spriteSheet.get("t-cross-2");
-            break;
-          case "1100":
-            tile.sprite = this.spriteSheet.get("turn-1");
-            break;
-          case "1101":
-            tile.sprite = this.spriteSheet.get("t-cross-1");
-            break;
-          case "1110":
-            tile.sprite = this.spriteSheet.get("t-cross-4");
-            break;
-          case "1111":
-            tile.sprite = this.spriteSheet.get("cross");
-            break;
-        }
+        tile.sprite = this.spriteSheet.get(adjacentTileSequence);
+        tile.initializeRoad(adjacentTileSequence);
       });
     return grid;
   }
